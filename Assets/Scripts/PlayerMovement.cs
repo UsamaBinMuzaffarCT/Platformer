@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
 
     #region private-variables
 
+    [SerializeField] private GameObject playerCamera;
+
     private float horizontal;
     [SerializeField] private float speed = 8f;
     [SerializeField] private float jumpingPower = 16f;
@@ -25,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float jumpBufferTime = 0.2f;
     [SerializeField] private float jumpBufferCounter;
+
+    [SerializeField] private float fallTimer = 0.5f;
 
     private float gravity = 4.5f;
     private bool isWallSliding;
@@ -37,7 +41,15 @@ public class PlayerMovement : MonoBehaviour
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
     private float dashingCooldown = 1f;
-    private Coroutine dashCoroutine = null;
+
+    [SerializeField] private bool jump = false;
+
+    private bool isWallJumping;
+    private float wallJumpingDirection;
+    private float wallJumpingTime = 0.2f;
+    private float wallJumpingCounter;
+    private float wallJumpingDuration = 0.4f;
+    private Vector2 wallJumpingPower = new Vector2(8f, 16f);
 
     private bool isFacingRight = true;
 
@@ -49,16 +61,26 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator PerformDash()
     {
-        canDash = false;
-        isDashing = true;
-        float gravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-        rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-        yield return new WaitForSeconds(dashingTime);
-        rb.gravityScale = gravity;
-        isDashing = false;
-        yield return new WaitForSeconds(dashingCooldown);
-        canDash = true;
+        if (!isWallSliding)
+        {
+            canDash = false;
+            isDashing = true;
+            float gravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            yield return new WaitForSeconds(dashingTime);
+            rb.gravityScale = gravity;
+            isDashing = false;
+            yield return new WaitForSeconds(dashingCooldown);
+            canDash = true;
+        }
+        else
+        {
+            rb.velocity = new Vector2(0f, 0f);
+            yield return new WaitForSeconds(dashingTime);
+            yield return new WaitForSeconds(dashingCooldown);
+            canDash = true;
+        }
     }
 
     #endregion
@@ -69,13 +91,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext context)
     {
+        jump = false;
         if(context.performed && canDash)
         {
-            if (dashCoroutine != null)
-            {
-                StopCoroutine(dashCoroutine);
-            }
-            dashCoroutine = StartCoroutine(PerformDash());
+            StartCoroutine(PerformDash());
         }
     }
 
@@ -87,7 +106,12 @@ public class PlayerMovement : MonoBehaviour
         }
         if (context.performed)
         {
+            jump = true;
             jumpBufferCounter = jumpBufferTime;
+        }
+        else
+        {
+            jump = false;
         }
 
         if (context.performed && coyoteTimeCounter > 0f)
@@ -124,6 +148,36 @@ public class PlayerMovement : MonoBehaviour
         horizontal = context.ReadValue<Vector2>().x;
     }
 
+    public void WallJump(InputAction.CallbackContext context)
+    {
+        if (isWallSliding)
+        {
+            isWallJumping = false;
+            wallJumpingDirection = -transform.localScale.x;
+            wallJumpingCounter = wallJumpingTime;
+
+            CancelInvoke(nameof(StopWallJumping));
+        }
+        else
+        {
+            wallJumpingCounter -= Time.deltaTime;
+        }
+        if (context.performed && wallJumpingCounter > 0f)
+        {
+            isWallJumping = true;
+            rb.velocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
+            Debug.Log(rb.velocity);
+            wallJumpingCounter = 0f;
+
+            if (transform.localScale.x != wallJumpingDirection)
+            {
+                isFacingRight = !isFacingRight;
+                transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            }
+            Invoke(nameof(StopWallJumping), wallJumpingDuration);
+        }
+    }
+
     #endregion
 
     #region private-functions
@@ -149,13 +203,16 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        if (!isFacingRight && horizontal > 0f)
+        if (!isWallJumping)
         {
-            Flip();
-        }
-        else if (isFacingRight && horizontal < 0f)
-        {
-            Flip();
+            if (!isFacingRight && horizontal > 0f)
+            {
+                Flip();
+            }
+            else if (isFacingRight && horizontal < 0f)
+            {
+                Flip();
+            }
         }
         WallSilde();
     }
@@ -166,20 +223,21 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
-        if (isWallSliding)
+        if (isWallSliding )
+        {
+            horizontal = 0;
+        }
+        if (!isWallJumping)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
         }
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
    
     private void WallSilde()
     {
         if(IsWalled() && !IsGrounded())
         {
-            Debug.Log(Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
             isWallSliding = true;
-            //rb.gravityScale = 0;
             rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
         else
@@ -189,9 +247,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void StopWallJumping()
+    {
+        isWallJumping = false;
+    }
+
     private bool IsWalled()
     {
-        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallLayer);
+        return Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer);
     }
 
     private bool IsGrounded()
