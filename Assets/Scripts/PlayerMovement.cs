@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
+    public float repulsionForce = 3f;
 
     #endregion
 
@@ -28,8 +31,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.2f;
     [SerializeField] private float jumpBufferCounter;
 
-    [SerializeField] private float fallTimer = 0.5f;
-
     private float gravity = 4.5f;
     private bool isWallSliding;
     private float wallSlidingSpeed = 2f;
@@ -40,11 +41,11 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing;
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
-    private float dashingCooldown = 1f;
+    private float dashingCooldown = 0.5f;
 
-    [SerializeField] private bool jump = false;
+    [SerializeField] private float tempHorizontal;
 
-    private bool isWallJumping;
+    [SerializeField] private bool isWallJumping;
     private float wallJumpingDirection;
     private float wallJumpingTime = 0.2f;
     private float wallJumpingCounter;
@@ -52,12 +53,27 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
 
     private bool isFacingRight = true;
+    [SerializeField] private bool isMoving = false;
+
+    private Coroutine edgeRepulsionCoroutine = null;
 
     #endregion
 
     #endregion
 
     #region coroutines
+
+    private IEnumerator RepulseFromEdge()
+    {
+        for(int i = 0; i < 300; i++)
+        { 
+            if(rb.velocity.y >= 0)
+            {
+                rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, 0.5f));
+            }
+        }
+        yield return null;
+    }
 
     private IEnumerator PerformDash()
     {
@@ -91,7 +107,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext context)
     {
-        jump = false;
         if(context.performed && canDash)
         {
             StartCoroutine(PerformDash());
@@ -106,12 +121,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (context.performed)
         {
-            jump = true;
             jumpBufferCounter = jumpBufferTime;
-        }
-        else
-        {
-            jump = false;
         }
 
         if (context.performed && coyoteTimeCounter > 0f)
@@ -137,20 +147,26 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
+        tempHorizontal = context.ReadValue<Vector2>().x;
+        if (context.canceled)
+        {
+            isMoving = false;
+        }
+        else
+        {
+            isMoving = true;
+        }
         if (isDashing)
         {
             return;
         }
-        if (isWallSliding)
-        {
-            horizontal = 0;
-        }
+        
         horizontal = context.ReadValue<Vector2>().x;
     }
 
     public void WallJump(InputAction.CallbackContext context)
     {
-        if (isWallSliding)
+        if (IsWalled())
         {
             isWallJumping = false;
             wallJumpingDirection = -transform.localScale.x;
@@ -162,11 +178,10 @@ public class PlayerMovement : MonoBehaviour
         {
             wallJumpingCounter -= Time.deltaTime;
         }
-        if (context.performed && wallJumpingCounter > 0f)
+        if (context.performed && wallJumpingCounter > 0f && !IsGrounded())
         {
             isWallJumping = true;
             rb.velocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
-            Debug.Log(rb.velocity);
             wallJumpingCounter = 0f;
 
             if (transform.localScale.x != wallJumpingDirection)
@@ -226,19 +241,30 @@ public class PlayerMovement : MonoBehaviour
         if (isWallSliding )
         {
             horizontal = 0;
+            return;
+        }
+        if (IsSideGrounded())
+        {
+            horizontal = 0;
+            return;
         }
         if (!isWallJumping)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
         }
+        horizontal = tempHorizontal;
     }
    
+    
     private void WallSilde()
     {
         if(IsWalled() && !IsGrounded())
         {
             isWallSliding = true;
-            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
+            if (isMoving)
+            {
+                rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
+            }
         }
         else
         {
@@ -252,6 +278,28 @@ public class PlayerMovement : MonoBehaviour
         isWallJumping = false;
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!IsGrounded() && collision.tag == "Edge")
+        {
+            if(edgeRepulsionCoroutine != null)
+            {
+                StopCoroutine(edgeRepulsionCoroutine);
+                edgeRepulsionCoroutine = null;
+            }
+            edgeRepulsionCoroutine = StartCoroutine(RepulseFromEdge());
+        }
+        else if (!IsGrounded() && collision.tag == "Slide")
+        {
+            rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, -0.5f));
+        }
+    }
+
+    private bool IsSideGrounded()
+    {
+        return Physics2D.OverlapCircle(wallCheck.position, 0.1f, groundLayer);
+    }
+
     private bool IsWalled()
     {
         return Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer);
@@ -259,6 +307,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
+        wallJumpingCounter = 0;
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
