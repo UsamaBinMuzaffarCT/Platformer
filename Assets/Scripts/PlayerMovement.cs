@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
-    public float repulsionForce = 3f;
+    public float repulsionForce = 0.05f;
 
     #endregion
 
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float horizontal;
     [SerializeField] private float speed = 8f;
+    [SerializeField] private float fallSpeed = 11f;
     [SerializeField] private float jumpingPower = 16f;
 
     [SerializeField] private float coyoteTime = 0.2f;
@@ -65,11 +66,11 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator RepulseFromEdge()
     {
-        for(int i = 0; i < 300; i++)
+        for(int i = 0; i < 70; i++)
         { 
-            if(rb.velocity.y >= 0)
+            if(rb.velocity.y > 0)
             {
-                rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, 0.5f));
+                rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, 0.185f));
             }
         }
         yield return null;
@@ -245,12 +246,13 @@ public class PlayerMovement : MonoBehaviour
         }
         if (IsSideGrounded())
         {
+            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed , float.MaxValue));
             horizontal = 0;
             return;
         }
         if (!isWallJumping)
         {
-            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+            rb.velocity = new Vector2(horizontal * speed, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
         }
         horizontal = tempHorizontal;
     }
@@ -282,7 +284,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!IsGrounded() && collision.tag == "Edge")
         {
-            if(edgeRepulsionCoroutine != null)
+            if (edgeRepulsionCoroutine != null)
             {
                 StopCoroutine(edgeRepulsionCoroutine);
                 edgeRepulsionCoroutine = null;
@@ -297,7 +299,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsSideGrounded()
     {
-        return Physics2D.OverlapCircle(wallCheck.position, 0.1f, groundLayer);
+        return wallCheck.GetComponent<WallChecking>().isWalled;
     }
 
     private bool IsWalled()
