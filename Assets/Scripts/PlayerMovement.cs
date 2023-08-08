@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool isMoving = false;
 
     private Coroutine edgeRepulsionCoroutine = null;
+    [SerializeField] private bool edge = false;
 
     #endregion
 
@@ -66,25 +67,92 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator RepulseFromEdge()
     {
-        for(int i = 0; i < 70; i++)
-        { 
-            if(rb.velocity.y > 0)
+        for (int i = 0; i < 90; i++)
+        {
+            if (rb.velocity.y > 0)
             {
-                rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, 0.185f));
+                if (edge)
+                {
+                    rb.AddForce(new Vector2(0, 1f));
+                }
             }
         }
         yield return null;
     }
 
-    private IEnumerator PerformDash()
+    private IEnumerator PerformShadowDash(bool forward = true)
     {
         if (!isWallSliding)
         {
+
             canDash = false;
             isDashing = true;
             float gravity = rb.gravityScale;
             rb.gravityScale = 0f;
-            rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            if (forward)
+            {
+                rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            }
+            else
+            {
+                rb.velocity = new Vector2(-1 * transform.localScale.x * dashingPower, 0f);
+            }
+            transform.GetComponent<Collider2D>().enabled = false;
+            foreach(Transform child in transform)
+            {
+                try
+                {
+                    child.GetComponent<Collider2D>().enabled = false;
+                }
+                catch 
+                {
+                    continue;
+                }
+            }
+            yield return new WaitForSeconds(dashingTime);
+            transform.GetComponent<Collider2D>().enabled = true;
+            foreach (Transform child in transform)
+            {
+                try
+                {
+                    child.GetComponent<Collider2D>().enabled = true;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            rb.gravityScale = gravity;
+            isDashing = false;
+            yield return new WaitForSeconds(dashingCooldown);
+            canDash = true;
+        }
+        else
+        {
+            rb.velocity = new Vector2(0f, 0f);
+            yield return new WaitForSeconds(dashingTime);
+            yield return new WaitForSeconds(dashingCooldown);
+            canDash = true;
+        }
+    }
+
+    private IEnumerator PerformDash(bool forward = true)
+    {
+        if (!isWallSliding)
+        {
+
+            canDash = false;
+            isDashing = true;
+            float gravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            if (forward)
+            {
+                rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            }
+            else
+            {
+                rb.velocity = new Vector2(-1 * transform.localScale.x * dashingPower, 0f);
+            }
             yield return new WaitForSeconds(dashingTime);
             rb.gravityScale = gravity;
             isDashing = false;
@@ -106,11 +174,35 @@ public class PlayerMovement : MonoBehaviour
 
     #region public-functions
 
+    public void ShadowDash(InputAction.CallbackContext context)
+    {
+        if (context.performed && canDash)
+        {
+            StartCoroutine(PerformShadowDash());
+        }
+    }
+
+    public void ShadowBackDash(InputAction.CallbackContext context)
+    {
+        if (context.performed && canDash)
+        {
+            StartCoroutine(PerformShadowDash(false));
+        }
+    }
+
     public void Dash(InputAction.CallbackContext context)
     {
-        if(context.performed && canDash)
+        if (context.performed && canDash)
         {
             StartCoroutine(PerformDash());
+        }
+    }
+
+    public void BackDash(InputAction.CallbackContext context)
+    {
+        if (context.performed && canDash)
+        {
+            StartCoroutine(PerformDash(false));
         }
     }
 
@@ -161,7 +253,7 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
-        
+
         horizontal = context.ReadValue<Vector2>().x;
     }
 
@@ -208,7 +300,7 @@ public class PlayerMovement : MonoBehaviour
         jumpBufferCounter -= Time.deltaTime;
         if (IsGrounded())
         {
-            if(jumpBufferCounter > 0f)
+            if (jumpBufferCounter > 0f)
             {
                 PerformJump();
             }
@@ -239,14 +331,14 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
-        if (isWallSliding )
+        if (isWallSliding)
         {
             horizontal = 0;
             return;
         }
         if (IsSideGrounded())
         {
-            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed , float.MaxValue));
+            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
             horizontal = 0;
             return;
         }
@@ -256,11 +348,11 @@ public class PlayerMovement : MonoBehaviour
         }
         horizontal = tempHorizontal;
     }
-   
-    
+
+
     private void WallSilde()
     {
-        if(IsWalled() && !IsGrounded())
+        if (IsWalled() && !IsGrounded())
         {
             isWallSliding = true;
             if (isMoving)
@@ -270,7 +362,10 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            rb.gravityScale = gravity;
+            if (!isDashing)
+            {
+                rb.gravityScale = gravity;
+            }
             isWallSliding = false;
         }
     }
@@ -284,6 +379,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!IsGrounded() && collision.tag == "Edge")
         {
+            edge = true;
             if (edgeRepulsionCoroutine != null)
             {
                 StopCoroutine(edgeRepulsionCoroutine);
@@ -291,11 +387,17 @@ public class PlayerMovement : MonoBehaviour
             }
             edgeRepulsionCoroutine = StartCoroutine(RepulseFromEdge());
         }
-        else if (!IsGrounded() && collision.tag == "Slide")
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Edge")
         {
-            rb.AddForce(new Vector2((transform.localScale.x * -1) * repulsionForce, -0.5f));
+            edge = false;
+            rb.AddForce(new Vector2(0, -20f));
         }
     }
+
 
     private bool IsSideGrounded()
     {
