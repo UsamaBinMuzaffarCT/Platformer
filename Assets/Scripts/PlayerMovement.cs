@@ -289,13 +289,12 @@ public class PlayerMovement : MonoBehaviour
         }
         if (context.performed)
         {
+            isMoving = true;
             isRunning = true;
             isIdle = false;
         }
 
         horizontal = context.ReadValue<Vector2>().x;
-        isMoving = true;
-        
     }
 
     public void WallJump(InputAction.CallbackContext context)
@@ -420,6 +419,10 @@ public class PlayerMovement : MonoBehaviour
                 rb.gravityScale = gravity;
             }
             isWallSliding = false;
+            if (isMoving)
+            {
+                isRunning = true;
+            }
         }
     }
 
