@@ -460,16 +460,9 @@ public class PlayerMovement : MonoBehaviour
         return wallCheck.GetComponent<WallChecking>().isWalled;
     }
 
-    private void TempMovementStop()
-    {
-        horizontal = tempHorizontal;
-    }
-
     private bool IsWalled()
     {
         return Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer);
-        horizontal = 0;
-        Invoke(nameof(TempMovementStop), 0.5f);
     }
 
     private bool IsGrounded()
