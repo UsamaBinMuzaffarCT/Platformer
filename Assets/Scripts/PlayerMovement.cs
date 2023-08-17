@@ -9,12 +9,13 @@ public class PlayerMovement : MonoBehaviour
     #region variables
 
     #region public-variables
-
+    public Enumirators.Faction faction;
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
     public float repulsionForce = 0.05f;
 
+    public bool isAttacking;
     public bool isIdle;
     public bool isRunning;
     public bool isJumping;
@@ -26,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     #region private-variables
 
-
+    private BaseAnimationControls animationControls;
     [SerializeField] private Animator animator;
 
     [SerializeField] private GameObject playerCamera;
@@ -186,6 +187,15 @@ public class PlayerMovement : MonoBehaviour
 
     #region public-functions
 
+    public void Attack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            isAttacking = true;
+            Invoke(nameof(StopAttack),0.1f);
+        }
+    }
+
     public void ShadowDash(InputAction.CallbackContext context)
     {
         if (context.performed && canDash)
@@ -330,9 +340,30 @@ public class PlayerMovement : MonoBehaviour
 
     #region private-functions
 
+    private void Awake()
+    {
+        if (faction == Enumirators.Faction.Mage)
+        {
+            animationControls = gameObject.AddComponent<MageAnimationsController>();
+        }
+        else if (faction == Enumirators.Faction.Warrior)
+        {
+            animationControls = gameObject.AddComponent<WarriorAnimatorControls>();
+        }
+        else if (faction == Enumirators.Faction.Gunman)
+        {
+            animationControls = gameObject.AddComponent<GunManAnimationControls>();
+        }
+    }
+
     private void Start()
     {
         isIdle = true;   
+    }
+
+    private void StopAttack()
+    {
+        isAttacking = false;
     }
 
     void Update()
@@ -468,8 +499,6 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWalled()
     {
         return Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer);
-        horizontal = 0;
-        Invoke(nameof(TempMovementStop), 0.5f);
     }
 
     private bool IsGrounded()

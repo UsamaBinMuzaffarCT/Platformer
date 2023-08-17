@@ -61,20 +61,6 @@ public class AnimationControls : MonoBehaviour
         currentState = state;
     }
 
-    private void Test()
-    {
-        Debug.Log("Test");
-        animator.Play(run);
-        Invoke(nameof(Test2), 1);
-    }
-
-    private void Test2()
-    {
-        Debug.Log("Test");
-        animator.Play(idle);
-        Invoke(nameof(Test), 1);
-    }
-
     private string GetAnimationState()
     {
         if (!playerMovement.isWallSliding && isFilpped)
