@@ -5,32 +5,33 @@ using UnityEngine;
 public class EnemyBehaviourPatrolling : MonoBehaviour
 {
     #region Public Variables
-    public Transform rayCast;
-    public LayerMask raycastMask;
-    public float rayCastLength;
     public float attackDistance; //Minimum distance for attack
     public float moveSpeed;
     public float timer; //Timer for cooldown between attacks
+    public bool inRange;
+    public Transform target;
     public Transform leftLimit;
     public Transform rightLimit;
+    public GameObject hotZone;
+    public GameObject triggerArea;
     #endregion
 
     #region Private Variables
-    private RaycastHit2D hit;
-    private Transform target;
     private Animator anim;
     private float distance; //Store the distance b/w enemy and player
-    [SerializeField] private bool attackMode;
-    private bool inRange; //Check if Player is in range
+    private bool attackMode;
+     //Check if Player is in range
     private bool cooling; //Check if Enemy is cooling after attack
     private float intTimer;
     #endregion
+
 
     void Awake()
     {
         SelectTarget();
         intTimer = timer; //Store the inital value of timer
         anim = GetComponent<Animator>();
+        inRange = false;
     }
 
     void Update()
@@ -44,41 +45,14 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         {
             SelectTarget();
         }
-
+              
         if (inRange)
-        {
-            hit = Physics2D.Raycast(rayCast.position, transform.right, rayCastLength, raycastMask);
-            RaycastDebugger();
-        }
-
-        //When Player is detected
-        if (hit.collider != null)
         {
             EnemyLogic();
         }
-        else if (hit.collider == null)
-        {
-            inRange = false;
-        }
-
-        if (inRange == false)
-        {
-            StopAttack();
-        }
-        anim.SetBool("canWalk", true);
     }
 
-    void OnTriggerEnter2D(Collider2D trig)
-    {
-        if (trig.gameObject.tag == "Player")
-        {
-            target = trig.transform;
-            inRange = true;
-            Flip();
-        }
-    }
-
-    void EnemyLogic()
+    private void EnemyLogic()
     {
         distance = Vector2.Distance(transform.position, target.position);
 
@@ -98,7 +72,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         }
     }
 
-    void Move()
+    private void Move()
     {
         anim.SetBool("canWalk", true);
 
@@ -110,7 +84,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         }
     }
 
-    void Attack()
+    private void Attack()
     {
         timer = intTimer; //Reset Timer when Player enter Attack Range
         attackMode = true; //To check if Enemy can still attack or not
@@ -119,7 +93,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         anim.SetBool("Attack", true);
     }
 
-    void Cooldown()
+    private void Cooldown()
     {
         timer -= Time.deltaTime;
 
@@ -130,23 +104,11 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         }
     }
 
-    void StopAttack()
+    private void StopAttack()
     {
         cooling = false;
         attackMode = false;
         anim.SetBool("Attack", false);
-    }
-
-    void RaycastDebugger()
-    {
-        if (distance > attackDistance)
-        {
-            Debug.DrawRay(rayCast.position, transform.right * rayCastLength, Color.red);
-        }
-        else if (attackDistance > distance)
-        {
-            Debug.DrawRay(rayCast.position, transform.right * rayCastLength, Color.green);
-        }
     }
 
     public void TriggerCooling()
@@ -159,7 +121,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         return transform.position.x > leftLimit.position.x && transform.position.x < rightLimit.position.x;
     }
 
-    private void SelectTarget()
+    public void SelectTarget()
     {
         float distanceToLeft = Vector3.Distance(transform.position, leftLimit.position);
         float distanceToRight = Vector3.Distance(transform.position, rightLimit.position);
@@ -176,7 +138,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         Flip();
     }
 
-    void Flip()
+    public void Flip()
     {
         Vector3 rotation = transform.eulerAngles;
         if (transform.position.x > target.position.x)
