@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,7 +26,8 @@ public class PlayerMovement : MonoBehaviour
     #region private-variables
 
     private BaseAnimationControls animationControls;
-    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject gunBarrel;
 
     [SerializeField] private GameObject playerCamera;
 
@@ -193,6 +192,11 @@ public class PlayerMovement : MonoBehaviour
         {
             isAttacking = true;
             Invoke(nameof(StopAttack),0.1f);
+            if (faction == Enumirators.Faction.Gunman)
+            {
+                GameObject instantiatedBullet = Instantiate(bullet);
+                instantiatedBullet.transform.position = gunBarrel.transform.position;
+            }
         }
     }
 

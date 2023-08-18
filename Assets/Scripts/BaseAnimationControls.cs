@@ -22,6 +22,8 @@ public abstract class BaseAnimationControls : MonoBehaviour
     protected PlayerMovement playerMovement;
     protected float lockedTill;
 
+    protected AnimatorsScriptable animatorsScriptable;
+
     #endregion
 
     #endregion
@@ -37,20 +39,21 @@ public abstract class BaseAnimationControls : MonoBehaviour
     protected virtual void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
-        animator = GetComponentInChildren<Animator>();
-        playerSprite = GetComponentInChildren<SpriteRenderer>().gameObject;
+        playerSprite = GameObject.FindGameObjectWithTag("PlayerSprite");
+        animator = playerSprite.GetComponent<Animator>();
+        animatorsScriptable = Resources.Load<AnimatorsScriptable>("ScriptableObjects/AnimatorsScriptableObject");
 
         if (playerMovement.faction == Enumirators.Faction.Gunman)
         {
-            animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PlayerAnimatorControllers/GunMan");
+            animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Gunman).controller;
         }
         else if(playerMovement.faction == Enumirators.Faction.Warrior)
         {
-            animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PlayerAnimatorControllers/PixelCharAnim_Sword_idle_0");
+            animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Warrior).controller;
         }
         else if(playerMovement.faction == Enumirators.Faction.Mage)
         {
-            animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PlayerAnimatorControllers/PixelCharAnim_Plain_idle_0");
+            animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Mage).controller;
         }
     }
 

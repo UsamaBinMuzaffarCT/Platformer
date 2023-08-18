@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Edge
   - Slide
+  - PlayerSprite
   layers:
   - Default
   - TransparentFX

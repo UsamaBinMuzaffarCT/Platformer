@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94bd02aabce32b1478162a757eed5559, type: 3}
+  m_Name: AnimatorsScriptableObject
+  m_EditorClassIdentifier: 
+  factionAnimators:
+  - faction: 0
+    controller: {fileID: 9100000, guid: 15a412ccc9d494adba7e01c88607f05f, type: 2}
+  - faction: 1
+    controller: {fileID: 9100000, guid: 45c596d4dcb2742089af3f717fab7de4, type: 2}
+  - faction: 2
+    controller: {fileID: 9100000, guid: 2b18dcbe5727245238ac0e19b07b0b5a, type: 2}
