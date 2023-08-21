@@ -8,11 +8,16 @@ public class Fireball : MonoBehaviour
     public float speed = 20f;
     public int damage = 40;
     public Rigidbody2D rb;
+    public bool fizzleOut = false;
+
+    [SerializeField] private float shotDelay = 0.1f;
+    private float timer;
 
     private GameObject player;
 
     private void Awake()
     {
+        timer = 0;
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
@@ -20,16 +25,32 @@ public class Fireball : MonoBehaviour
     void Start()
     {
         rb.velocity = (player.transform.localScale.x / math.abs(player.transform.localScale.x)) * transform.right * speed;
+        Vector3 localScale = transform.localScale;
+        localScale.x *= player.transform.localScale.x / math.abs(player.transform.localScale.x);
+        transform.localScale = localScale;
+    }
+
+    private void Update()
+    {
+        if (fizzleOut)
+        {
+            Destroy(gameObject);
+        }
+        timer += Time.deltaTime;
     }
 
     private void DestroyFireball()
     {
         Destroy(gameObject);
-
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        Invoke(nameof(DestroyFireball), 0.5f);
+        if(timer > shotDelay)
+        {
+            rb.velocity = Vector2.zero;
+            gameObject.GetComponent<Animator>().SetBool("Impact", true);
+            Invoke(nameof(DestroyFireball), 0.5f);
+        }
     }
 }

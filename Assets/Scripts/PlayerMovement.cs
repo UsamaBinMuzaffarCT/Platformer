@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject fireball;
     [SerializeField] private GameObject gunBarrel;
 
     [SerializeField] private GameObject playerCamera;
@@ -195,6 +196,11 @@ public class PlayerMovement : MonoBehaviour
             if (faction == Enumirators.Faction.Gunman)
             {
                 GameObject instantiatedBullet = Instantiate(bullet);
+                instantiatedBullet.transform.position = gunBarrel.transform.position;
+            }
+            if (faction == Enumirators.Faction.Mage)
+            {
+                GameObject instantiatedBullet = Instantiate(fireball);
                 instantiatedBullet.transform.position = gunBarrel.transform.position;
             }
         }
