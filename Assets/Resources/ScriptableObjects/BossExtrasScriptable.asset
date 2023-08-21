@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc176720f442e894c815a39562312b23, type: 3}
+  m_Name: BossExtrasScriptable
+  m_EditorClassIdentifier: 
+  extras:
+  - extraAttackEffect: {fileID: 7961166706345884718, guid: 3d6ca637ed8a87c42ba7cb52e256459a, type: 3}
+    boss: 0

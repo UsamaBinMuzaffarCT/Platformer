@@ -10,4 +10,9 @@ public class Enumirators : MonoBehaviour
         Mage,
         Gunman
     }
+
+    public enum Boss
+    {
+        BringerOfDeath
+    }
 }

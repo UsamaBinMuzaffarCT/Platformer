@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,9 +22,14 @@ public class PlayerMovement : MonoBehaviour
     public bool isBackDashing;
     public bool isWallSliding;
 
+    public bool knockBackFromRight;
+    public float knockBackTimer;
+    public float knockBackForce;
+
     #endregion
 
     #region private-variables
+
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
@@ -436,7 +442,22 @@ public class PlayerMovement : MonoBehaviour
         }
         if (!isWallJumping)
         {
-            rb.velocity = new Vector2(horizontal * speed, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
+            if(knockBackTimer <= 0f)
+            {
+                rb.velocity = new Vector2(horizontal * speed, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
+            }
+            else
+            {
+                if (knockBackFromRight)
+                {
+                    rb.velocity = new Vector2(-knockBackForce, knockBackForce);
+                }
+                else
+                {
+                    rb.velocity = new Vector2(knockBackForce, knockBackForce);
+                }
+                knockBackTimer -= Time.deltaTime;
+            }
         }
         horizontal = tempHorizontal;
     }
