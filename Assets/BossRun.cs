@@ -42,12 +42,20 @@ public class BossRun : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         GameObject player = ClosestPlayer(animator);
-        Vector2 target = new Vector2(player.transform.position.x, animator.transform.parent.position.y);
-        rb.MovePosition(Vector2.MoveTowards(animator.transform.parent.position, target, speed * Time.fixedDeltaTime));
-        rb.GetComponent<Boss>().LookAtPlayer();
-        if(Vector2.Distance(player.transform.position, rb.position) <= attackRange)
+        if (player.GetComponent<PlayerMovement>().isDead)
         {
-            animator.SetTrigger("Attack");
+            animator.SetTrigger("KilledPlayer");
+            return;
+        }
+        else
+        {
+            Vector2 target = new Vector2(player.transform.position.x, animator.transform.parent.position.y);
+            rb.MovePosition(Vector2.MoveTowards(animator.transform.parent.position, target, speed * Time.fixedDeltaTime));
+            rb.GetComponent<Boss>().LookAtPlayer();
+            if (Vector2.Distance(player.transform.position, rb.position) <= attackRange)
+            {
+                animator.SetTrigger("Attack");
+            }
         }
     }
 
@@ -55,5 +63,6 @@ public class BossRun : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.ResetTrigger("Attack");
+        animator.ResetTrigger("KilledPlayer");
     }
 }

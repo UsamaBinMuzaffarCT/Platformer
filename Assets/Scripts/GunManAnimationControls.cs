@@ -14,6 +14,7 @@ public class GunManAnimationControls : BaseAnimationControls
     private string jump = "PixelCharAnim_Gun_jump";
     private string dash = "PixelCharAnim_Gun_wallRide";
     private string backDash = "PixelCharAnim_Gun_wallRide";
+    private string death = "PixelCharAnim_Gun_death";
 
     #endregion
 
@@ -31,6 +32,14 @@ public class GunManAnimationControls : BaseAnimationControls
 
     protected override string GetAnimationState()
     {
+        if (Time.time < lockedTill)
+        {
+            return currentState;
+        }
+        if (playerMovement.isDead)
+        {
+            return LockState(death, 0.5f);
+        }
         if (!playerMovement.isWallSliding && isFilpped)
         {
             playerSprite.transform.localScale = new Vector3(-playerSprite.transform.localScale.x, playerSprite.transform.localScale.y, playerSprite.transform.localScale.z);

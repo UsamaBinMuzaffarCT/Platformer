@@ -12,5 +12,9 @@ public class PlayerHealth : MonoBehaviour
             health -= damage;
             GetComponent<PlayerMovement>().knockBackTimer = 0.2f;
         }
+        else
+        {
+            GetComponent<PlayerMovement>().isDead = true;
+        }
     }
 }

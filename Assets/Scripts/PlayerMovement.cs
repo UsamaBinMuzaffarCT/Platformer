@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isDashing;
     public bool isBackDashing;
     public bool isWallSliding;
+    public bool isDead;
 
     public bool knockBackFromRight;
     public float knockBackTimer;
@@ -29,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region private-variables
-
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isWallSliding)
         {
-
+            GetComponentInChildren<SpriteRenderer>().color = Color.black;
             canDash = false;
             isDashing = true;
             float gravity = rb.gravityScale;
@@ -144,6 +144,7 @@ public class PlayerMovement : MonoBehaviour
             isBackDashing = false;
             yield return new WaitForSeconds(dashingCooldown);
             canDash = true;
+            GetComponentInChildren<SpriteRenderer>().color = Color.white;
         }
         else
         {
@@ -197,44 +198,59 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed)
         {
-            isAttacking = true;
-            Invoke(nameof(StopAttack),0.1f);
-            if (faction == Enumirators.Faction.Gunman)
+            if (!isDead) 
             {
-                GameObject instantiatedBullet = Instantiate(bullet);
-                instantiatedBullet.transform.position = gunBarrel.transform.position;
-            }
-            if (faction == Enumirators.Faction.Mage)
-            {
-                GameObject instantiatedBullet = Instantiate(fireball);
-                instantiatedBullet.transform.position = gunBarrel.transform.position;
+                isAttacking = true;
+                Invoke(nameof(StopAttack), 0.1f);
+                if (faction == Enumirators.Faction.Gunman)
+                {
+                    GameObject instantiatedBullet = Instantiate(bullet);
+                    instantiatedBullet.transform.position = gunBarrel.transform.position;
+                }
+                if (faction == Enumirators.Faction.Mage)
+                {
+                    GameObject instantiatedBullet = Instantiate(fireball);
+                    instantiatedBullet.transform.position = gunBarrel.transform.position;
+                }
             }
         }
     }
 
     public void ShadowDash(InputAction.CallbackContext context)
     {
-        if (context.performed && canDash)
+        if (faction.Equals(Enumirators.Faction.Mage))
         {
-            if(dashCoroutine != null)
+            if (context.performed && canDash)
             {
-                StopCoroutine(dashCoroutine);
-                dashCoroutine = null;
+                if (!isDead)
+                {
+                    if (dashCoroutine != null)
+                    {
+                        StopCoroutine(dashCoroutine);
+                        dashCoroutine = null;
+                    }
+                    dashCoroutine = StartCoroutine(PerformShadowDash());
+                }
             }
-            dashCoroutine = StartCoroutine(PerformShadowDash());
         }
     }
 
     public void ShadowBackDash(InputAction.CallbackContext context)
     {
-        if (context.performed && canDash)
+        if (faction.Equals(Enumirators.Faction.Mage))
         {
-            if (dashCoroutine != null)
+            if (context.performed && canDash)
             {
-                StopCoroutine(dashCoroutine);
-                dashCoroutine = null;
+                if (!isDead)
+                {
+                    if (dashCoroutine != null)
+                    {
+                        StopCoroutine(dashCoroutine);
+                        dashCoroutine = null;
+                    }
+                    dashCoroutine = StartCoroutine(PerformShadowDash(false));
+                }
             }
-            dashCoroutine = StartCoroutine(PerformShadowDash(false));
         }
     }
 
@@ -242,12 +258,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && canDash)
         {
-            if (dashCoroutine != null)
+            if (!isDead)
             {
-                StopCoroutine(dashCoroutine);
-                dashCoroutine = null;
+                if (dashCoroutine != null)
+                {
+                    StopCoroutine(dashCoroutine);
+                    dashCoroutine = null;
+                }
+                dashCoroutine = StartCoroutine(PerformDash());
             }
-            dashCoroutine = StartCoroutine(PerformDash());
         }
     }
 
@@ -255,12 +274,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && canDash)
         {
-            if (dashCoroutine != null)
+            if (!isDead)
             {
-                StopCoroutine(dashCoroutine);
-                dashCoroutine = null;
+                if (dashCoroutine != null)
+                {
+                    StopCoroutine(dashCoroutine);
+                    dashCoroutine = null;
+                }
+                dashCoroutine = StartCoroutine(PerformDash(false));
             }
-            dashCoroutine = StartCoroutine(PerformDash(false));
         }
     }
 
@@ -282,7 +304,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (context.performed && coyoteTimeCounter > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            if (!isDead)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            }
         }
 
         if (context.canceled && rb.velocity.y > 0f)
@@ -358,6 +383,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        isDead = false;
         if (faction == Enumirators.Faction.Mage)
         {
             animationControls = gameObject.AddComponent<MageAnimationsController>();
@@ -384,82 +410,91 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isDashing)
+        if (!isDead)
         {
-            WallSilde();
-            return;
-        }
-        jumpBufferCounter -= Time.deltaTime;
-        if (IsGrounded())
-        {
-            if(horizontal == 0)
+            if (isDashing)
             {
-                isIdle = true;
+                WallSilde();
+                return;
             }
-            if (jumpBufferCounter > 0f)
+            jumpBufferCounter -= Time.deltaTime;
+            if (IsGrounded())
             {
-                PerformJump();
+                if (horizontal == 0)
+                {
+                    isIdle = true;
+                }
+                if (jumpBufferCounter > 0f)
+                {
+                    PerformJump();
+                }
+                coyoteTimeCounter = coyoteTime;
+                isJumping = false;
             }
-            coyoteTimeCounter = coyoteTime;
-            isJumping = false;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-            isJumping = true;
-        }
+            else
+            {
+                coyoteTimeCounter -= Time.deltaTime;
+                isJumping = true;
+            }
 
-        if (!isWallJumping)
-        {
-            if (!isFacingRight && horizontal > 0f)
+            if (!isWallJumping)
             {
-                Flip();
+                if (!isFacingRight && horizontal > 0f)
+                {
+                    Flip();
+                }
+                else if (isFacingRight && horizontal < 0f)
+                {
+                    Flip();
+                }
             }
-            else if (isFacingRight && horizontal < 0f)
-            {
-                Flip();
-            }
-        }
-        WallSilde();
+            WallSilde();
+        }   
     }
 
     private void FixedUpdate()
     {
-        if (isDashing)
+        if (!isDead)
         {
-            return;
-        }
-        if (isWallSliding)
-        {
-            horizontal = 0;
-            return;
-        }
-        if (IsSideGrounded())
-        {
-            rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
-            horizontal = 0;
-            return;
-        }
-        if (!isWallJumping)
-        {
-            if(knockBackTimer <= 0f)
+            if (isDashing)
             {
-                rb.velocity = new Vector2(horizontal * speed, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
+                return;
             }
-            else
+            if (isWallSliding)
             {
-                if (knockBackFromRight)
+                horizontal = 0;
+                return;
+            }
+            if (IsSideGrounded())
+            {
+                rb.velocity = new Vector2(0, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
+                horizontal = 0;
+                return;
+            }
+            if (!isWallJumping)
+            {
+                if (knockBackTimer <= 0f)
                 {
-                    rb.velocity = new Vector2(-knockBackForce, knockBackForce);
+                    transform.GetComponentInChildren<SpriteRenderer>().color = Color.white;
+                    rb.velocity = new Vector2(horizontal * speed, Mathf.Clamp(rb.velocity.y, -1 * fallSpeed, float.MaxValue));
                 }
                 else
                 {
-                    rb.velocity = new Vector2(knockBackForce, knockBackForce);
+                    if (knockBackFromRight)
+                    {
+                        rb.velocity = new Vector2(-knockBackForce, knockBackForce);
+                        transform.GetComponentInChildren<SpriteRenderer>().color = Color.red;
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(knockBackForce, knockBackForce);
+                        transform.GetComponentInChildren<SpriteRenderer>().color = Color.red;
+                    }
+                    knockBackTimer -= Time.deltaTime;
                 }
-                knockBackTimer -= Time.deltaTime;
             }
+            horizontal = tempHorizontal;
         }
-        horizontal = tempHorizontal;
     }
 
 

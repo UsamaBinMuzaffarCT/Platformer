@@ -14,6 +14,7 @@ public class WarriorAnimatorControls : BaseAnimationControls
     private string dash = "PixelCharAnim_Sword_wallRide";
     private string attack = "PixelCharAnim_Sword_quickAtk";
     private string backDash = "PixelCharAnim_Sword_slideAtk";
+    private string death = "PixelCharAnim_Sword_death";
 
     #endregion
 
@@ -34,6 +35,10 @@ public class WarriorAnimatorControls : BaseAnimationControls
         if(Time.time < lockedTill)
         {
             return currentState;
+        }
+        if (playerMovement.isDead)
+        {
+            return LockState(death, 0.5f);
         }
         if (playerMovement.isAttacking)
         {
