@@ -50,7 +50,12 @@ public class Fireball : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
             gameObject.GetComponent<Animator>().SetBool("Impact", true);
+            if (hitInfo.CompareTag("Boss"))
+            {
+                hitInfo.transform.GetComponentInParent<Animator>().GetComponent<BossHealth>().TakeDamage(20);
+            }
             Invoke(nameof(DestroyFireball), 0.5f);
         }
+
     }
 }

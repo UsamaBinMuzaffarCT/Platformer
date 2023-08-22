@@ -25,7 +25,10 @@ public class Bullet : MonoBehaviour {
 	void OnTriggerEnter2D (Collider2D hitInfo)
 	{
 		Instantiate(impactEffect, transform.position, transform.rotation);
-
+		if (hitInfo.CompareTag("Boss"))
+		{
+			hitInfo.transform.GetComponentInParent<Animator>().GetComponent<BossHealth>().TakeDamage(10);
+		}
 		Destroy(gameObject);
 	}
 	
