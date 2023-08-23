@@ -15,4 +15,12 @@ public class Enumirators : MonoBehaviour
     {
         BringerOfDeath
     }
+
+    public enum RoomType
+    {
+        StartRoom,
+        BossRoom,
+        DungeonRoom,
+        OpenRoom
+    }
 }

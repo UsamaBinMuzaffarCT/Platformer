@@ -13,7 +13,7 @@ public class TriggerAreaStationaryCheck : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDead == false)
         {
             gameObject.SetActive(false);
             enemyBehaviour.target = collision.gameObject;

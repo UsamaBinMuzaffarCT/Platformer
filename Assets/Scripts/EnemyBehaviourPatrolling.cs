@@ -50,6 +50,10 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         {
             EnemyLogic();
         }
+        else
+        {
+            StopAttack();
+        }
     }
 
     private void EnemyLogic()
@@ -111,6 +115,7 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         anim.SetBool("Attack", false);
     }
 
+    
     public void TriggerCooling()
     {
         cooling = true;

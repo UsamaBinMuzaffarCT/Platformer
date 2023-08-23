@@ -7,6 +7,7 @@ public class HotZoneStationaryCheck : MonoBehaviour
     private EnemyBehaviour enemyBehaviour;
     private bool inRange;
     private Animator animator;
+    [SerializeField] private GameObject currentPlayer;
 
     private void Awake()
     {
@@ -20,12 +21,21 @@ public class HotZoneStationaryCheck : MonoBehaviour
         {
             enemyBehaviour.Flip();
         }
+        if (currentPlayer.GetComponent<PlayerMovement>().isDead == true)
+        {
+            enemyBehaviour.inRange = false;
+            currentPlayer = null;
+            inRange = false;
+            gameObject.SetActive(false);
+            enemyBehaviour.triggerArea.SetActive(true);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            currentPlayer = collision.gameObject;
             inRange = true;
         }
     }
@@ -34,6 +44,7 @@ public class HotZoneStationaryCheck : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            currentPlayer = null;
             inRange = false;
             gameObject.SetActive(false);
             enemyBehaviour.triggerArea.SetActive(true);

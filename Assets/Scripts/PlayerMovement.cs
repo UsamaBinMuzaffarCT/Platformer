@@ -449,7 +449,11 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
             WallSilde();
-        }   
+        }
+        else
+        {
+            GetComponentInChildren<SpriteRenderer>().color = Color.white;
+        }
     }
 
     private void FixedUpdate()

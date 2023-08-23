@@ -18,4 +18,16 @@ public class Classes : MonoBehaviour
         public GameObject extraAttackEffect;
         public Enumirators.Boss boss;
     }
+
+    public class Room
+    {
+        public Enumirators.RoomType roomType;
+        public int id;
+        public List<Room> neighbourRooms;
+    }
+
+    public class Map
+    {
+        public List<Room> rooms;
+    }
 }

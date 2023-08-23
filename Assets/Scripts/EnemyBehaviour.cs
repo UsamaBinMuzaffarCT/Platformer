@@ -43,15 +43,6 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D trig)
-    {
-        if (trig.gameObject.tag == "Player")
-        {
-            target = trig.gameObject;
-            inRange = true;
-        }
-    }
-
     void EnemyLogic()
     {
         distance = Vector2.Distance(transform.position, target.transform.position);

@@ -54,6 +54,10 @@ public class Fireball : MonoBehaviour
             {
                 hitInfo.transform.GetComponentInParent<Animator>().GetComponent<BossHealth>().TakeDamage(20);
             }
+            if (hitInfo.CompareTag("Enemy"))
+            {
+                hitInfo.transform.GetComponentInParent<Animator>().GetComponent<EnemyHealth>().TakeDamage(20);
+            }
             Invoke(nameof(DestroyFireball), 0.5f);
         }
 
