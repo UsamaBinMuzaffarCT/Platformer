@@ -22,6 +22,7 @@ public class Classes : MonoBehaviour
     public class Room
     {
         public Enumirators.RoomType roomType;
+        public bool visited = false;
         public int id;
         public List<Room> neighbourRooms;
     }

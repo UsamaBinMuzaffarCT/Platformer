@@ -412,6 +412,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isDead)
         {
+            if(horizontal != 0)
+            {
+                isRunning = true;
+            }
             if (isDashing)
             {
                 WallSilde();
