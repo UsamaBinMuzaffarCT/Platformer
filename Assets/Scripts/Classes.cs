@@ -19,16 +19,27 @@ public class Classes : MonoBehaviour
         public Enumirators.Boss boss;
     }
 
+    [Serializable]
+    public class RoomObjects
+    {
+        public Enumirators.RoomType roomType;
+        public GameObject room;
+        public int numDoors;
+    }
+
+    [Serializable]
     public class Room
     {
         public Enumirators.RoomType roomType;
-        public bool visited = false;
+        [SerializeField] public bool visited = false;
         public int id;
-        public List<Room> neighbourRooms;
+        public List<Room> neighbourRooms = new List<Room>();
+        public GameObject room;
     }
 
+    [Serializable]
     public class Map
     {
-        public List<Room> rooms;
+        public List<Room> rooms = new List<Room>();
     }
 }

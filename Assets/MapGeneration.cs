@@ -7,10 +7,76 @@ public class MapGeneration : MonoBehaviour
     public Classes.Map map;
     public int num;
 
+    private RoomsScriptable roomsScriptable;
 
-    void Start()
+    private void Awake()
     {
+        roomsScriptable = Resources.Load<RoomsScriptable>("ScriptableObjects/RoomsScriptable");
         map = GenerateMap(num);
+        map = ClearTraversal(map);
+        InstantiateRooms();
+        MakeRoomConnections();
+    }
+
+    private void MakeRoomConnections()
+    {
+        foreach(Classes.Room room in map.rooms)
+        {
+            for(int i = 0; i < room.neighbourRooms.Count; i++)
+            {
+                if (!room.neighbourRooms[i].room.GetComponent<RoomConnections>().teleportationPoints.Contains(room.room.GetComponent<RoomConnections>().teleportationPoints[i]))
+                {
+                    foreach(GameObject teleportPoint in room.neighbourRooms[i].room.GetComponent<RoomConnections>().teleportationPoints)
+                    {
+                        if(teleportPoint.GetComponent<Teleportation>().next == null)
+                        {
+                            room.room.GetComponent<RoomConnections>().teleportationPoints[i].GetComponent<Teleportation>().next = teleportPoint;
+                            teleportPoint.GetComponent<Teleportation>().next = room.room.GetComponent<RoomConnections>().teleportationPoints[i];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Enumirators.RoomType RandomRoomType()
+    {
+        int randomNum = Random.Range(0, 4);
+        if(randomNum == 0)
+        {
+            return Enumirators.RoomType.OpenRoom;
+        }
+        else if(randomNum == 1)
+        {
+            return Enumirators.RoomType.DungeonRoom;
+        }
+        else
+        {
+            return Enumirators.RoomType.MiscRoom;
+        }
+    }
+
+    private void InstantiateRooms()
+    {
+        foreach(Classes.Room room in map.rooms)
+        {
+            if(room.id == -1)
+            {
+                room.roomType = Enumirators.RoomType.StartRoom;
+            }
+            else if (room.id == -2)
+            {
+                room.roomType = Enumirators.RoomType.BossRoom;
+            }
+            else
+            {
+                room.roomType = RandomRoomType();
+            }
+            room.room = Instantiate(roomsScriptable.GetRandomRoom(room.roomType));
+            room.room.SetActive(false);
+            room.room.GetComponent<RoomConnections>().id = room.id;
+            room.room.transform.SetParent(transform, false);
+        }
     }
 
     private void Traverse(Classes.Room room)

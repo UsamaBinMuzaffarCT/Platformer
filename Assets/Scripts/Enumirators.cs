@@ -21,6 +21,7 @@ public class Enumirators : MonoBehaviour
         StartRoom,
         BossRoom,
         DungeonRoom,
-        OpenRoom
+        OpenRoom,
+        MiscRoom
     }
 }

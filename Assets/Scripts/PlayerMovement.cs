@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isWallSliding;
     public bool isDead;
 
+    public bool interact;
     public bool knockBackFromRight;
     public float knockBackTimer;
     public float knockBackForce;
@@ -193,6 +194,21 @@ public class PlayerMovement : MonoBehaviour
     #region functions
 
     #region public-functions
+
+    public void Interact(InputAction.CallbackContext context)
+    {
+        if (!isDead)
+        {
+            if (context.performed)
+            {
+                interact = true;
+            }
+            if (context.canceled)
+            {
+                interact = false;
+            }
+        }
+    }
 
     public void Attack(InputAction.CallbackContext context)
     {

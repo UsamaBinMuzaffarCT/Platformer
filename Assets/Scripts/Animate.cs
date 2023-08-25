@@ -9,6 +9,7 @@ public class Animate : MonoBehaviour
 
     [SerializeField] private List<Sprite> sprites;
     private bool running = true;
+    public int delay = 100;
 
     #endregion
 
@@ -23,7 +24,7 @@ public class Animate : MonoBehaviour
             {
                 i = 0;
             }
-            await Task.Delay(100);
+            await Task.Delay(delay);
         }
     }
 

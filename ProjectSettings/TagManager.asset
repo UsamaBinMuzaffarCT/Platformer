@@ -9,6 +9,11 @@ TagManager:
   - PlayerSprite
   - Enemy
   - Boss
+  - Room
+  - Map
+  - StartPoint
+  - TeleportationPoint
+  - GameManager
   layers:
   - Default
   - TransparentFX

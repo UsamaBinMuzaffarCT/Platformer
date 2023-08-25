@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8234bda9fad54d96c2deb780bf134, type: 3}
+  m_Name: RoomsScriptable
+  m_EditorClassIdentifier: 
+  roomObjects:
+  - roomType: 0
+    room: {fileID: 5211683228459463645, guid: 5b2c7be47971da24d8ddf63e2014e1b3, type: 3}
+    numDoors: 1
+  - roomType: 3
+    room: {fileID: 6468445752649563687, guid: 82f645c2b576e4b43adaef88d2b87b1c, type: 3}
+    numDoors: 3
+  - roomType: 3
+    room: {fileID: 1080364764296806466, guid: 2d5e209bee315874c9745fc8cc89db3a, type: 3}
+    numDoors: 3
+  - roomType: 3
+    room: {fileID: 585644534938158934, guid: 9a83f1deac4b20f4ca081e77d82d3503, type: 3}
+    numDoors: 3
+  - roomType: 3
+    room: {fileID: 2805302872151606562, guid: bb92f7bb7a863734db0d7c428e2b73e6, type: 3}
+    numDoors: 3
+  - roomType: 2
+    room: {fileID: 4686601362017152639, guid: 4170e039e29123246aac49f28a52523d, type: 3}
+    numDoors: 3
+  - roomType: 2
+    room: {fileID: 9197134949317082148, guid: 0daf9eff453bb99488dae22a9c20be44, type: 3}
+    numDoors: 3
+  - roomType: 2
+    room: {fileID: 8770883293628919207, guid: 36df45bba1c1a8c4d86e3696302224e4, type: 3}
+    numDoors: 3
+  - roomType: 1
+    room: {fileID: 3593205711232998787, guid: 46558bad68e6ada47a046d36cc7c7a8c, type: 3}
+    numDoors: 1
+  - roomType: 4
+    room: {fileID: 5211683228459463645, guid: fc850459572319c42adf45b58294dc13, type: 3}
+    numDoors: 3
+  - roomType: 4
+    room: {fileID: 4589306150313901746, guid: f12ce8798e8d3304fafd4f0099ced26e, type: 3}
+    numDoors: 3
