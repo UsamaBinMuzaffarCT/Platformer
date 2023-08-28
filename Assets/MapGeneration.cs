@@ -35,33 +35,6 @@ public class MapGeneration : MonoBehaviour
         }
     }
 
-    //private GameObject GetNextFreeTeleportationPoint(Classes.Room room)
-    //{
-    //    foreach(GameObject teleportationPoint in room.teleportationPoints)
-    //    {
-    //        if(teleportationPoint.GetComponent<Teleportation>().next == null)
-    //        {
-    //            return teleportationPoint;
-    //        }
-    //    }
-    //}
-
-    private GameObject FindCorrespondingTelePoint(GameObject telePoint)
-    {
-        foreach (Classes.Room room in map.rooms)
-        {
-            foreach (GameObject telePoint2 in room.teleportationPoints)
-            {
-                GameObject next = telePoint2.GetComponent<Teleportation>().next;
-                if (next == telePoint)
-                {
-                    return telePoint2;
-                }
-            }
-        }
-        return null;
-    }
-
     private void MakeRoomConnections()
     {
         foreach(Classes.Room room in map.rooms)
@@ -74,6 +47,7 @@ public class MapGeneration : MonoBehaviour
                 {
                     while (neighbourIndex < room.neighbourRooms.Count)
                     {
+                        bool added = true;
                         for (int i = 0; i < room.neighbourRooms[neighbourIndex].teleportationPoints.Count; i++)
                         {
                             if (room.neighbourRooms[neighbourIndex].teleportationPoints[i].GetComponent<Teleportation>().next == null)
@@ -82,10 +56,14 @@ public class MapGeneration : MonoBehaviour
                                 room.teleportationPoints[teleportIndex].GetComponent<Teleportation>().next = room.neighbourRooms[neighbourIndex].teleportationPoints[i];
                                 teleportIndex++;
                                 neighbourIndex++;
+                                added = false;
                                 break;
                             }
                         }
-                        neighbourIndex++;
+                        if (added)
+                        {
+                            neighbourIndex++;
+                        }
                     }
                     teleportIndex++;
                 }
