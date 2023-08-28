@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MapGeneration : MonoBehaviour
@@ -18,23 +19,80 @@ public class MapGeneration : MonoBehaviour
         MakeRoomConnections();
     }
 
+    private void RemoveRoomConnection(Classes.Room room)
+    {
+        foreach (Transform child in room.room.transform)
+        {
+            if(child.tag == "TeleportationPoint")
+            {
+                room.teleportationPoints.Remove(child.gameObject);
+                Destroy(child.gameObject);
+                if(room.teleportationPoints.Count == room.neighbourRooms.Count)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    //private GameObject GetNextFreeTeleportationPoint(Classes.Room room)
+    //{
+    //    foreach(GameObject teleportationPoint in room.teleportationPoints)
+    //    {
+    //        if(teleportationPoint.GetComponent<Teleportation>().next == null)
+    //        {
+    //            return teleportationPoint;
+    //        }
+    //    }
+    //}
+
+    private GameObject FindCorrespondingTelePoint(GameObject telePoint)
+    {
+        foreach (Classes.Room room in map.rooms)
+        {
+            foreach (GameObject telePoint2 in room.teleportationPoints)
+            {
+                GameObject next = telePoint2.GetComponent<Teleportation>().next;
+                if (next == telePoint)
+                {
+                    return telePoint2;
+                }
+            }
+        }
+        return null;
+    }
+
     private void MakeRoomConnections()
     {
         foreach(Classes.Room room in map.rooms)
         {
-            for(int i = 0; i < room.neighbourRooms.Count; i++)
+            int teleportIndex = 0;
+            int neighbourIndex = 0;
+            while(teleportIndex < room.teleportationPoints.Count)
             {
-                if (!room.neighbourRooms[i].room.GetComponent<RoomConnections>().teleportationPoints.Contains(room.room.GetComponent<RoomConnections>().teleportationPoints[i]))
+                if (room.teleportationPoints[teleportIndex].GetComponent<Teleportation>().next == null)
                 {
-                    foreach(GameObject teleportPoint in room.neighbourRooms[i].room.GetComponent<RoomConnections>().teleportationPoints)
+                    while (neighbourIndex < room.neighbourRooms.Count)
                     {
-                        if(teleportPoint.GetComponent<Teleportation>().next == null)
+                        for (int i = 0; i < room.neighbourRooms[neighbourIndex].teleportationPoints.Count; i++)
                         {
-                            room.room.GetComponent<RoomConnections>().teleportationPoints[i].GetComponent<Teleportation>().next = teleportPoint;
-                            teleportPoint.GetComponent<Teleportation>().next = room.room.GetComponent<RoomConnections>().teleportationPoints[i];
+                            if (room.neighbourRooms[neighbourIndex].teleportationPoints[i].GetComponent<Teleportation>().next == null)
+                            {
+                                room.neighbourRooms[neighbourIndex].teleportationPoints[i].GetComponent<Teleportation>().next = room.teleportationPoints[teleportIndex];
+                                room.teleportationPoints[teleportIndex].GetComponent<Teleportation>().next = room.neighbourRooms[neighbourIndex].teleportationPoints[i];
+                                teleportIndex++;
+                                neighbourIndex++;
+                                break;
+                            }
                         }
+                        neighbourIndex++;
                     }
+                    teleportIndex++;
                 }
+                else
+                {
+                    teleportIndex++;
+                } 
             }
         }
     }
@@ -75,7 +133,12 @@ public class MapGeneration : MonoBehaviour
             room.room = Instantiate(roomsScriptable.GetRandomRoom(room.roomType));
             room.room.SetActive(false);
             room.room.GetComponent<RoomConnections>().id = room.id;
+            room.teleportationPoints = room.room.GetComponent<RoomConnections>().teleportationPoints;
             room.room.transform.SetParent(transform, false);
+            if (room.neighbourRooms.Count < room.teleportationPoints.Count)
+            {
+                RemoveRoomConnection(room);
+            }
         }
     }
 
