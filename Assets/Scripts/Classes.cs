@@ -36,6 +36,7 @@ public class Classes : MonoBehaviour
         public List<Room> neighbourRooms = new List<Room>();
         public GameObject room;
         public List<GameObject> teleportationPoints;
+        public int level;
     }
 
     [Serializable]

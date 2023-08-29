@@ -34,7 +34,7 @@ public abstract class BaseAnimationControls : MonoBehaviour
 
     #endregion
 
-    #region private-functions
+    #region protected-functions
 
     protected virtual void Awake()
     {

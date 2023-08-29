@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Classes;
 
 public class MapGeneration : MonoBehaviour
 {
@@ -302,6 +303,48 @@ public class MapGeneration : MonoBehaviour
         return map;
     }
 
+    private void AssignLevel(Classes.Room room, int level)
+    {
+        room.level = level;
+        foreach(Classes.Room neighbour in room.neighbourRooms)
+        {
+            if(neighbour.level == -1)
+            {
+                AssignLevel(neighbour, level + 1);
+            }
+        }
+    }
+
+    private Classes.Map SetLevelsFromStartingNode(Classes.Map map, Classes.Room startingNode)
+    {
+        foreach (var room in map.rooms)
+        {
+            room.level = int.MaxValue;
+        }
+
+        // Initialize the starting node's level to 0
+        startingNode.level = 0;
+
+        Queue<Room> queue = new Queue<Room>();
+        queue.Enqueue(startingNode);
+
+        while (queue.Count > 0)
+        {
+            Room currentRoom = queue.Dequeue();
+
+            // Update the level of neighbor rooms if lower level is found
+            foreach (var neighbor in currentRoom.neighbourRooms)
+            {
+                if (neighbor.level == int.MaxValue)
+                {
+                    neighbor.level = currentRoom.level + 1;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+        return map;
+    }
+
     private Classes.Map GenerateMap(int numRoom)
     {
         Classes.Map generatedMap = new Classes.Map();
@@ -340,6 +383,14 @@ public class MapGeneration : MonoBehaviour
         generatedMap = RemoveOverConnections(generatedMap);
         generatedMap = ConnectSingleConnections(generatedMap);
         generatedMap = AddStartAndEndNodes(generatedMap);
+        foreach(Classes.Room room in generatedMap.rooms)
+        {
+            if(room.id == -1)
+            {
+                generatedMap = SetLevelsFromStartingNode(generatedMap, room);
+                break;
+            }
+        }
         return generatedMap;
     }
 

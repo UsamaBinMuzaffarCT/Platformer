@@ -24,4 +24,11 @@ public class Enumirators : MonoBehaviour
         OpenRoom,
         MiscRoom
     }
+
+    public enum QuestType
+    {
+        Fetch,
+        Kill,
+        Rescue
+    }
 }

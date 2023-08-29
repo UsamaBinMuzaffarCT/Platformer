@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
     [SerializeField] private float teleportationTimer;
+    [SerializeField] private MapVisualization mapVisualization;
 
     #endregion
 
@@ -37,9 +39,19 @@ public class GameManager : MonoBehaviour
         TakePlayersToStartRoom();
     }
 
+    
+
     private void Update()
     {
         teleportationTimer -= Time.deltaTime;
+        if (players[0].GetComponent<PlayerMovement>().map)
+        {
+            players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(true);
+        }
+        else
+        {
+            players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(false);
+        }
     }
 
     private void TakePlayersToStartRoom()
@@ -70,6 +82,7 @@ public class GameManager : MonoBehaviour
         {
             currentActiveRoom.SetActive(false);
             nextRoomTeleportPoint.transform.parent.gameObject.SetActive(true);
+            mapVisualization.SetActiveColor(nextRoomTeleportPoint.GetComponentInParent<RoomConnections>().id);
             currentActiveRoom = nextRoomTeleportPoint.transform.parent.gameObject;
             foreach (var player in players)
             {

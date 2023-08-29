@@ -14,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     public float repulsionForce = 0.05f;
 
+    public Canvas playerCanvas;
+
     public bool isAttacking;
     public bool isIdle;
     public bool isRunning;
@@ -22,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
     public bool isBackDashing;
     public bool isWallSliding;
     public bool isDead;
+
+    public bool map = false;
 
     public bool interact;
     public bool knockBackFromRight;
@@ -195,9 +199,27 @@ public class PlayerMovement : MonoBehaviour
 
     #region public-functions
 
-    public void Interact(InputAction.CallbackContext context)
+    public void Map(InputAction.CallbackContext context)
     {
         if (!isDead)
+        {
+            if (context.performed)
+            {
+                if (map)
+                {
+                    map = false;
+                }
+                else
+                {
+                    map = true;
+                }
+            }
+        }
+    }
+
+    public void Interact(InputAction.CallbackContext context)
+    {
+        if (!isDead && !map)
         {
             if (context.performed)
             {
@@ -214,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed)
         {
-            if (!isDead) 
+            if (!isDead && !map) 
             {
                 isAttacking = true;
                 Invoke(nameof(StopAttack), 0.1f);
@@ -238,7 +260,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (context.performed && canDash)
             {
-                if (!isDead)
+                if (!isDead && !map)
                 {
                     if (dashCoroutine != null)
                     {
@@ -257,7 +279,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (context.performed && canDash)
             {
-                if (!isDead)
+                if (!isDead && !map)
                 {
                     if (dashCoroutine != null)
                     {
@@ -274,7 +296,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && canDash)
         {
-            if (!isDead)
+            if (!isDead && !map)
             {
                 if (dashCoroutine != null)
                 {
@@ -290,7 +312,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && canDash)
         {
-            if (!isDead)
+            if (!isDead && !map)
             {
                 if (dashCoroutine != null)
                 {
@@ -320,7 +342,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (context.performed && coyoteTimeCounter > 0f)
         {
-            if (!isDead)
+            if (!isDead && !map)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             }
@@ -426,7 +448,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (!isDead)
+        if (!isDead && !map)
         {
             if(horizontal != 0)
             {
@@ -478,7 +500,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isDead)
+        if (!isDead && !map)
         {
             if (isDashing)
             {
