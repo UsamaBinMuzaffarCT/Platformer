@@ -1,28 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LineRendererController : MonoBehaviour
 {
-    private LineRenderer lineRenderer;
-    private Transform[] points;
+    public GameObject linePrefab;
 
-    private void Awake()
+    public void DrawLineBetweenTransforms(RectTransform startTransform, RectTransform endTransform)
     {
-        lineRenderer = GetComponent<LineRenderer>();
+        GameObject lineGO = Instantiate(linePrefab, transform);
+        lineGO.transform.SetParent(transform, false);
+        Image lineImage = lineGO.GetComponent<Image>();
+
+        Vector3 startPos = startTransform.position;
+        Vector3 endPos = endTransform.position;
+
+        // Calculate position and size of the line
+        Vector3 midpoint = (startPos + endPos) / 2f;
+        lineGO.transform.position = midpoint;
+
+        float distance = Vector3.Distance(startPos, endPos);
+        lineImage.rectTransform.sizeDelta = new Vector2(distance, lineImage.rectTransform.sizeDelta.y);
+
+        // Calculate rotation angle
+        Vector3 direction = endPos - startPos;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        lineGO.transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    public void SetLine(Transform[] points)
-    {
-        lineRenderer.positionCount = points.Length;
-        this.points = points;
-    }
 
-    private void Update()
-    {
-        for(int i = 0; i < points.Length; i++)
-        {
-            lineRenderer.SetPosition(i, points[i].position);
-        }
-    }
 }

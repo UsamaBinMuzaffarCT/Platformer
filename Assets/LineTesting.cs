@@ -9,6 +9,6 @@ public class LineTesting : MonoBehaviour
 
     void Start()
     {
-        controller.SetLine(points);
+        //controller.SetLine(points);
     }
 }

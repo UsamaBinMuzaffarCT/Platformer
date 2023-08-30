@@ -7,7 +7,6 @@ using static Classes;
 
 public class MapVisualization : MonoBehaviour
 { 
-    private List<Transform> points = new List<Transform>();
     private List<GameObject> nodes = new List<GameObject>();
     [SerializeField] private Transform startTransform;
     [SerializeField] private GameObject nodePrefab;
@@ -84,31 +83,17 @@ public class MapVisualization : MonoBehaviour
 
     void ConnectNodes()
     {
+        RectTransform node1;
+        RectTransform node2;
         foreach (Room room in mapGenerator.map.rooms)
         {
            foreach(Room neighbour in room.neighbourRooms)
            {
-                Transform thisNode = nodes.Find(x => x.GetComponent<RoomConnections>().id == room.id).transform;
-                Transform nextNode = nodes.Find(x => x.GetComponent<RoomConnections>().id == neighbour.id).transform;
-                if (points.Count == 0)
-                {
-                    points.Add(thisNode);
-                    points.Add(nextNode);
-                }
-                else
-                {
-                    if (points[points.Count - 1] != thisNode)
-                    {
-                        points.Add(thisNode);
-                    }
-                    if (points[points.Count - 1] != nextNode)
-                    {
-                        points.Add(nextNode);
-                    }
-                }
-           }
+                node1 = nodes.Find(x => x.GetComponent<RoomConnections>().id == room.id).GetComponent<RectTransform>();
+                node2 = nodes.Find(x => x.GetComponent<RoomConnections>().id == neighbour.id).GetComponent<RectTransform>();
+                controller.DrawLineBetweenTransforms(node1, node2);
+            }
         }
-        controller.SetLine(points.ToArray());
     }
 
     public void SetQuestColor(int id, Color color)
@@ -139,7 +124,7 @@ public class MapVisualization : MonoBehaviour
             }
             else
             {
-                if(image.color != Color.cyan)
+                if(image.color != Color.cyan && image.color != Color.grey && image.color != Color.magenta)
                 {
                     image.color = Color.green;
                 }

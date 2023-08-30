@@ -683,7 +683,10 @@ PlayerSettings:
   webGLMemoryGeometricGrowthStep: 0.2
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Android: USE_PHYSICS2D;USE_NEW_INPUT
+    Standalone: USE_PHYSICS2D;USE_NEW_INPUT
+    WebGL: USE_PHYSICS2D;USE_NEW_INPUT
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

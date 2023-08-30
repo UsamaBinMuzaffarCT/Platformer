@@ -29,7 +29,8 @@ public abstract class BaseQuest : MonoBehaviour
 
     protected virtual void Awake()
     {
-
+        mapGeneration = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
+        mapVisualization = GameObject.FindWithTag("MapUI").GetComponent<MapVisualization>();
     }
 
     protected abstract void CreateQuest();

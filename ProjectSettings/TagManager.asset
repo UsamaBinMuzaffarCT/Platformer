@@ -14,6 +14,7 @@ TagManager:
   - StartPoint
   - TeleportationPoint
   - GameManager
+  - MapUI
   layers:
   - Default
   - TransparentFX
