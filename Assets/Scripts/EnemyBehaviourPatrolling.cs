@@ -5,9 +5,9 @@ using UnityEngine;
 public class EnemyBehaviourPatrolling : MonoBehaviour
 {
     #region Public Variables
-    public float attackDistance; //Minimum distance for attack
+    public float attackDistance;
     public float moveSpeed;
-    public float timer; //Timer for cooldown between attacks
+    public float timer; 
     public bool inRange;
     public Transform target;
     public Transform leftLimit;
@@ -18,20 +18,23 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
 
     #region Private Variables
     private Animator anim;
-    private float distance; //Store the distance b/w enemy and player
+    private float distance; 
     private bool attackMode;
-     //Check if Player is in range
-    private bool cooling; //Check if Enemy is cooling after attack
+    private bool cooling; 
     private float intTimer;
     #endregion
 
 
     void Awake()
     {
-        SelectTarget();
-        intTimer = timer; //Store the inital value of timer
+        intTimer = timer;
         anim = GetComponent<Animator>();
         inRange = false;
+    }
+
+    private void Start()
+    {
+        SelectTarget();
     }
 
     void Update()
@@ -90,8 +93,8 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
 
     private void Attack()
     {
-        timer = intTimer; //Reset Timer when Player enter Attack Range
-        attackMode = true; //To check if Enemy can still attack or not
+        timer = intTimer;
+        attackMode = true;
 
         anim.SetBool("canWalk", false);
         anim.SetBool("Attack", true);
@@ -152,7 +155,6 @@ public class EnemyBehaviourPatrolling : MonoBehaviour
         }
         else
         {
-            Debug.Log("Twist");
             rotation.y = 0;
         }
 

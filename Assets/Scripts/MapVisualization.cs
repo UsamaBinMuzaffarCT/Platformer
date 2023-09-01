@@ -92,7 +92,7 @@ public class MapVisualization : MonoBehaviour
                 node1 = nodes.Find(x => x.GetComponent<RoomConnections>().id == room.id).GetComponent<RectTransform>();
                 node2 = nodes.Find(x => x.GetComponent<RoomConnections>().id == neighbour.id).GetComponent<RectTransform>();
                 controller.DrawLineBetweenTransforms(node1, node2);
-            }
+           }
         }
     }
 

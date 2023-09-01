@@ -27,7 +27,6 @@ public class Classes : MonoBehaviour
         public int numDoors;
     }
 
-    [Serializable]
     public class Room
     {
         public Enumirators.RoomType roomType;
@@ -39,9 +38,15 @@ public class Classes : MonoBehaviour
         public int level;
     }
 
-    [Serializable]
     public class Map
     {
         public List<Room> rooms = new List<Room>();
+    }
+
+    [Serializable]
+    public class Enemy
+    {
+        public Enumirators.EnemyType enemyType;
+        public GameObject prefab;
     }
 }

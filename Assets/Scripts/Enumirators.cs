@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Enumirators : MonoBehaviour
 {
+    public enum EnemyType
+    {
+        Patrolling,
+        Stationary
+    }
     public enum Faction
     {
         Warrior,

@@ -14,27 +14,31 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     public float repulsionForce = 0.05f;
 
+
     public Canvas playerCanvas;
 
-    public bool isAttacking;
-    public bool isIdle;
-    public bool isRunning;
-    public bool isJumping;
-    public bool isDashing;
-    public bool isBackDashing;
-    public bool isWallSliding;
-    public bool isDead;
+    [HideInInspector] public bool isAttacking;
+    [HideInInspector] public bool isIdle;
+    [HideInInspector] public bool isRunning;
+    [HideInInspector] public bool isJumping;
+    [HideInInspector] public bool isDashing;
+    [HideInInspector] public bool isBackDashing;
+    [HideInInspector] public bool isWallSliding;
+    [HideInInspector] public bool isDead;
 
-    public bool map = false;
+    [HideInInspector] public bool map = false;
 
-    public bool interact;
-    public bool knockBackFromRight;
-    public float knockBackTimer;
-    public float knockBackForce;
+    [HideInInspector] public bool interact;
+    [HideInInspector] public bool knockBackFromRight;
+    [HideInInspector] public float knockBackTimer;
+    [HideInInspector] public float knockBackForce;
 
     #endregion
 
     #region private-variables
+
+    [SerializeField] private Joystick joystick;
+    //[SerializeField] private bl_Joystick joystick;
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
@@ -43,16 +47,18 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private GameObject playerCamera;
 
-    private float horizontal;
-    [SerializeField] private float speed = 8f;
-    [SerializeField] private float fallSpeed = 11f;
-    [SerializeField] private float jumpingPower = 16f;
+    private bool otherInput = true;
 
-    [SerializeField] private float coyoteTime = 0.2f;
-    [SerializeField] private float coyoteTimeCounter;
+    [SerializeField] private float horizontal;
+    private float speed = 8f;
+    private float fallSpeed = 15f;
+    private float jumpingPower = 18f;
 
-    [SerializeField] private float jumpBufferTime = 0.2f;
-    [SerializeField] private float jumpBufferCounter;
+    private float coyoteTime = 0.2f;
+    private float coyoteTimeCounter;
+
+    private float jumpBufferTime = 0.2f;
+    private float jumpBufferCounter;
 
     private float gravity = 4.5f;
     private float wallSlidingSpeed = 2f;
@@ -65,9 +71,9 @@ public class PlayerMovement : MonoBehaviour
     private float dashingCooldown = 0.5f;
     private Coroutine dashCoroutine = null;
 
-    [SerializeField] private float tempHorizontal;
+    private float tempHorizontal;
 
-    [SerializeField] private bool isWallJumping;
+    private bool isWallJumping;
     private float wallJumpingDirection;
     private float wallJumpingTime = 0.2f;
     private float wallJumpingCounter;
@@ -75,10 +81,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
 
     private bool isFacingRight = true;
-    [SerializeField] private bool isMoving = false;
+    private bool isMoving = false;
 
     private Coroutine edgeRepulsionCoroutine = null;
-    [SerializeField] private bool edge = false;
+    private bool edge = false;
 
     #endregion
 
@@ -367,10 +373,23 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         tempHorizontal = context.ReadValue<Vector2>().x;
+        if (tempHorizontal > 0.1f)
+        {
+            tempHorizontal = 1f;
+        }
+        else if (tempHorizontal < -0.1f)
+        {
+            tempHorizontal = -1f;
+        }
+        else
+        {
+            tempHorizontal = 0;
+        }
         if (context.canceled)
         {
             isMoving = false;
             isRunning = false;
+            otherInput = true;
         }
         if (isDashing)
         {
@@ -378,12 +397,25 @@ public class PlayerMovement : MonoBehaviour
         }
         if (context.performed)
         {
+            otherInput = false;
             isMoving = true;
             isRunning = true;
             isIdle = false;
         }
 
         horizontal = context.ReadValue<Vector2>().x;
+        if (horizontal > 0.1f)
+        {
+            horizontal = 1f;
+        }
+        else if (horizontal < -0.1f)
+        {
+            horizontal = -1f;
+        }
+        else
+        {
+            horizontal = 0;
+        }
     }
 
     public void WallJump(InputAction.CallbackContext context)
@@ -446,11 +478,44 @@ public class PlayerMovement : MonoBehaviour
         isAttacking = false;
     }
 
+    private void JoystickHorizontal()
+    {
+        if (otherInput)
+        {
+            tempHorizontal = joystick.Horizontal;
+            if (isDashing)
+            {
+                return;
+            }
+            horizontal = joystick.Horizontal;
+            if (horizontal > 0.2f)
+            {
+                isMoving = true;
+                isRunning = true;
+                isIdle = false;
+                horizontal = 1f;
+            }
+            else if (horizontal < -0.2f)
+            {
+                isMoving = true;
+                isRunning = true;
+                isIdle = false;
+                horizontal = -1f;
+            }
+            else
+            {
+                isMoving = false;
+                isRunning = false;
+            }
+        }
+    }
+
     void Update()
     {
         if (!isDead && !map)
         {
-            if(horizontal != 0)
+            JoystickHorizontal();
+            if (horizontal != 0)
             {
                 isRunning = true;
             }

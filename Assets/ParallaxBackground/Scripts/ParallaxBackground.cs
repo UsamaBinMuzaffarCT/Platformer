@@ -10,7 +10,7 @@ public class ParallaxBackground : MonoBehaviour {
     [SerializeField] private bool infiniteHorizontal;
     [SerializeField] private bool infiniteVertical;
 
-    private Transform cameraTransform;
+    [SerializeField] private Transform cameraTransform;
     private Vector3 lastCameraPosition;
     private float textureUnitSizeX;
     private float textureUnitSizeY;
@@ -19,8 +19,12 @@ public class ParallaxBackground : MonoBehaviour {
 
     #region funcitons
 
+    private void Awake()
+    {
+        cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
+    }
+
     private void Start() {
-        cameraTransform = Camera.main.transform;
         lastCameraPosition = cameraTransform.position;
         Sprite sprite = GetComponent<SpriteRenderer>().sprite;
         Texture2D texture = sprite.texture;

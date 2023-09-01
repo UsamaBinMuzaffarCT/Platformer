@@ -24,7 +24,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("Started");
+        //Debug.Log("Started");
         intTimer = timer; //Store the inital value of timer
         anim = GetComponent<Animator>();
     }
