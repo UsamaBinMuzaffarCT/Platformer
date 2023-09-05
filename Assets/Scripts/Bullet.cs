@@ -29,7 +29,12 @@ public class Bullet : MonoBehaviour {
 		{
 			hitInfo.transform.GetComponentInParent<Animator>().GetComponent<BossHealth>().TakeDamage(10);
 		}
-		Destroy(gameObject);
+        if (hitInfo.CompareTag("Enemy"))
+        {
+            hitInfo.transform.GetComponentInParent<Animator>().GetComponent<EnemyHealth>().TakeDamage(10);
+        }
+
+        Destroy(gameObject);
 	}
 	
 }

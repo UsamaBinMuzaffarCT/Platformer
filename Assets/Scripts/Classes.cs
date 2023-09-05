@@ -27,6 +27,18 @@ public class Classes : MonoBehaviour
         public int numDoors;
     }
 
+    public class NPCSpawn
+    {
+        public Enumirators.QuestType questType;
+        public int count = 0;
+    }
+
+    public class NPCQuest
+    {
+        public Enumirators.QuestType questType;
+        public int count = 0;
+    }
+
     public class Room
     {
         public Enumirators.RoomType roomType;

@@ -6,10 +6,13 @@ public class EnemyControl : MonoBehaviour
 {
     [SerializeField] private EnemyBehaviour enemyBehaviour = null;
     [SerializeField] private EnemyBehaviourPatrolling EnemyBehaviourPatrolling = null;
+    private Rigidbody2D rb;
     private float tempMovespeed;
+    private float tempGravity;
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         try
         {
             enemyBehaviour = GetComponent<EnemyBehaviour>();
@@ -30,15 +33,20 @@ public class EnemyControl : MonoBehaviour
 
     public void StopMoving()
     {
+        
         if(enemyBehaviour != null)
         {
             tempMovespeed = enemyBehaviour.moveSpeed;
             enemyBehaviour.moveSpeed = 0;
+            tempGravity = rb.gravityScale;
+            rb.gravityScale = 0;
         }
         if (EnemyBehaviourPatrolling != null)
         {
             tempMovespeed = EnemyBehaviourPatrolling.moveSpeed;
             EnemyBehaviourPatrolling.moveSpeed = 0;
+            tempGravity = rb.gravityScale;
+            rb.gravityScale = 0;
         }
 
     }
@@ -47,10 +55,12 @@ public class EnemyControl : MonoBehaviour
         if (enemyBehaviour != null)
         {
             enemyBehaviour.moveSpeed = tempMovespeed;
+            rb.gravityScale = tempGravity;
         }
         if (EnemyBehaviourPatrolling != null)
         {
             EnemyBehaviourPatrolling.moveSpeed = tempMovespeed;
+            rb.gravityScale = tempGravity;
         }
     }
 

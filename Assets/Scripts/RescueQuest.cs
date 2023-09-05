@@ -1,40 +1,40 @@
+using PixelCrushers.DialogueSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RescueQuest : BaseQuest
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void CreateQuest()
     {
-        Invoke("CreateQuest", 0.1f);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    protected override void CreateQuest()
-    {
-        Transform roomsParent = mapGeneration.gameObject.transform;
-        int pickRandom = Random.Range(0, roomsParent.childCount);
-        int count = 0;
-        foreach (Transform child in roomsParent)
+        bool questAccepted = DialogueLua.GetVariable("RescueQuestAccepted").asBool;
+        if (questAccepted && gameManager.nPCQuests.Find(x => x.questType == Enumirators.QuestType.Rescue).count < 1)
         {
-            RoomConnections childRoomConnections = child.GetComponent<RoomConnections>();
-            if (!child.gameObject.activeSelf && !(childRoomConnections.id == -1 || childRoomConnections.id == -2))
+            Transform roomsParent = mapGeneration.gameObject.transform;
+            int pickRandom = Random.Range(0, roomsParent.childCount);
+            int count = 0;
+            foreach (Transform child in roomsParent)
             {
-                if (count == pickRandom)
+                RoomConnections childRoomConnections = child.GetComponent<RoomConnections>();
+                if (!child.gameObject.activeSelf && !(childRoomConnections.id == -1 || childRoomConnections.id == -2))
                 {
-                    mapVisualization.SetQuestColor(childRoomConnections.id, Color.magenta);
-                    questRoomID = childRoomConnections.id;
-                    questType = Enumirators.QuestType.Rescue;
-                    questRoom = child.gameObject;
+                    if (count == pickRandom)
+                    {
+                        mapVisualization.SetQuestColor(childRoomConnections.id, Color.magenta);
+                        questRoomID = childRoomConnections.id;
+                        questType = Enumirators.QuestType.Rescue;
+                        questRoom = child.gameObject;
+                        foreach (Classes.NPCQuest nPCQuest in gameManager.nPCQuests)
+                        {
+                            if (nPCQuest.questType == Enumirators.QuestType.Rescue)
+                            {
+                                nPCQuest.count = 1;
+                            }
+                        }
+                    }
                 }
+                count++;
             }
-            count++;
         }
     }
 }

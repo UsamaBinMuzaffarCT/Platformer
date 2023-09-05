@@ -8,12 +8,13 @@ public abstract class BaseQuest : MonoBehaviour
 
     #region protected-variables
 
-    [SerializeField] protected int questRoomID;
-    [SerializeField] protected Enumirators.QuestType questType;
-    [SerializeField] protected GameObject questRoom;
-    [SerializeField] protected MapGeneration mapGeneration;
+    protected int questRoomID;
+    protected Enumirators.QuestType questType;
+    protected GameObject questRoom;
+    protected MapGeneration mapGeneration;
     protected bool questCompletionState = false;
-    [SerializeField] protected MapVisualization mapVisualization;
+    protected MapVisualization mapVisualization;
+    protected GameManager gameManager;
 
     #endregion
 
@@ -31,9 +32,10 @@ public abstract class BaseQuest : MonoBehaviour
     {
         mapGeneration = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
         mapVisualization = GameObject.FindWithTag("MapUI").GetComponent<MapVisualization>();
+        gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
     }
 
-    protected abstract void CreateQuest();
+    public abstract void CreateQuest();
 
     #endregion
 

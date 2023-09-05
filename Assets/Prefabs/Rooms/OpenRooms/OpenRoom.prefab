@@ -337,7 +337,7 @@ MonoBehaviour:
   - {x: -23.999971, y: -2, z: 0}
   m_ShapePathHash: -1306761366
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91502
+  m_InstanceId: 152398
   m_LocalBounds:
     m_Center: {x: -14.000014, y: -1.5, z: 0}
     m_Extent: {x: 9.999986, y: 0.5, z: 0}
@@ -1370,7 +1370,7 @@ MonoBehaviour:
   - {x: 21, y: -4, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91612
+  m_InstanceId: 152516
   m_LocalBounds:
     m_Center: {x: -10, y: 7, z: 0}
     m_Extent: {x: 31, y: 11, z: 0}
@@ -2715,7 +2715,7 @@ MonoBehaviour:
   - {x: -10.99997, y: 0, z: 0}
   m_ShapePathHash: 170855796
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91388
+  m_InstanceId: 152280
   m_LocalBounds:
     m_Center: {x: -10.000015, y: 0.5, z: 0}
     m_Extent: {x: 0.9999852, y: 0.5, z: 0}
@@ -6170,7 +6170,7 @@ MonoBehaviour:
   - {x: 21, y: -4, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91584
+  m_InstanceId: 152488
   m_LocalBounds:
     m_Center: {x: -10, y: 8, z: 0}
     m_Extent: {x: 31, y: 12, z: 0}
@@ -6287,6 +6287,7 @@ MonoBehaviour:
   parallaxEffectMultiplier: {x: 0.2, y: 0.1}
   infiniteHorizontal: 1
   infiniteVertical: 0
+  cameraTransform: {fileID: 0}
 --- !u!1 &2223002183323072920
 GameObject:
   m_ObjectHideFlags: 0
@@ -6657,7 +6658,7 @@ MonoBehaviour:
   - {x: 41.00003, y: 4, z: 0}
   m_ShapePathHash: 329892112
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91566
+  m_InstanceId: 152470
   m_LocalBounds:
     m_Center: {x: 52.999985, y: 5.5, z: 0}
     m_Extent: {x: 11.999985, y: 1.5, z: 0}
@@ -7008,7 +7009,7 @@ MonoBehaviour:
   - {x: 4.000029, y: -2, z: 0}
   m_ShapePathHash: 1868602071
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91434
+  m_InstanceId: 152328
   m_LocalBounds:
     m_Center: {x: 4.4999857, y: 1.5, z: 0}
     m_Extent: {x: 0.49998546, y: 3.5, z: 0}
@@ -7070,7 +7071,7 @@ MonoBehaviour:
   - {x: 4.000029, y: 5, z: 0}
   m_ShapePathHash: 569399776
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91444
+  m_InstanceId: 152338
   m_LocalBounds:
     m_Center: {x: 4.4999857, y: 5.5, z: 0}
     m_Extent: {x: 0.49998546, y: 0.5, z: 0}
@@ -7256,6 +7257,7 @@ MonoBehaviour:
   parallaxEffectMultiplier: {x: 0.5, y: 0.5}
   infiniteHorizontal: 1
   infiniteVertical: 0
+  cameraTransform: {fileID: 0}
 --- !u!1 &3771250396861122475
 GameObject:
   m_ObjectHideFlags: 0
@@ -7941,7 +7943,7 @@ MonoBehaviour:
   - {x: 21, y: -4, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91358
+  m_InstanceId: 152248
   m_LocalBounds:
     m_Center: {x: -10, y: 7, z: 0}
     m_Extent: {x: 31, y: 11, z: 0}
@@ -8098,7 +8100,7 @@ MonoBehaviour:
   - {x: 33.00003, y: -3, z: 0}
   m_ShapePathHash: -586457921
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91498
+  m_InstanceId: 152394
   m_LocalBounds:
     m_Center: {x: 33.499985, y: 1.5, z: 0}
     m_Extent: {x: 0.49998665, y: 4.5, z: 0}
@@ -12074,7 +12076,7 @@ MonoBehaviour:
   - {x: -40.999973, y: -13, z: 0}
   m_ShapePathHash: -851444515
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91318
+  m_InstanceId: 152208
   m_LocalBounds:
     m_Center: {x: 16.624985, y: -2, z: 0}
     m_Extent: {x: 58.374985, y: 11, z: 0}
@@ -12531,6 +12533,7 @@ Transform:
   - {fileID: 4741481875315321876}
   - {fileID: 3799653818765247172}
   - {fileID: 7280209717067788293}
+  - {fileID: 1298857540687208129}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12746,7 +12749,7 @@ MonoBehaviour:
   - {x: -22.999971, y: 0, z: 0}
   m_ShapePathHash: 83008585
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91604
+  m_InstanceId: 152508
   m_LocalBounds:
     m_Center: {x: -22.000015, y: 0.5, z: 0}
     m_Extent: {x: 0.9999857, y: 0.5, z: 0}
@@ -30399,7 +30402,7 @@ MonoBehaviour:
   - {x: 21, y: -8, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91548
+  m_InstanceId: 152446
   m_LocalBounds:
     m_Center: {x: -10, y: 5, z: 0}
     m_Extent: {x: 31, y: 13, z: 0}
@@ -30598,6 +30601,7 @@ MonoBehaviour:
   parallaxEffectMultiplier: {x: 0.4, y: 0.2}
   infiniteHorizontal: 1
   infiniteVertical: 0
+  cameraTransform: {fileID: 0}
 --- !u!1 &7307672309073470057
 GameObject:
   m_ObjectHideFlags: 0
@@ -30824,7 +30828,7 @@ MonoBehaviour:
   - {x: -3.999971, y: 4, z: 0}
   m_ShapePathHash: 1529107430
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91274
+  m_InstanceId: 152162
   m_LocalBounds:
     m_Center: {x: -2.0000148, y: 4.5, z: 0}
     m_Extent: {x: 1.9999853, y: 0.5, z: 0}
@@ -30892,6 +30896,37 @@ Transform:
   - {fileID: 6672117108769078939}
   - {fileID: 1934628771434425918}
   - {fileID: 2968785233871963105}
+  m_Father: {fileID: 9202911938735685044}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7475300091950189086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1298857540687208129}
+  m_Layer: 0
+  m_Name: NPCSpawn
+  m_TagString: NPCSpawn
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1298857540687208129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7475300091950189086}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -37.9, y: -1.1, z: -0.11037256}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 9202911938735685044}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31506,7 +31541,7 @@ MonoBehaviour:
   - {x: 0.000029300001, y: 1, z: 0}
   m_ShapePathHash: -387195323
   m_Mesh: {fileID: 0}
-  m_InstanceId: 91484
+  m_InstanceId: 152380
   m_LocalBounds:
     m_Center: {x: 20.5, y: 6.71875, z: 0}
     m_Extent: {x: 20.5, y: 5.71875, z: 0}

@@ -15,6 +15,9 @@ TagManager:
   - TeleportationPoint
   - GameManager
   - MapUI
+  - SpawnLocation
+  - NPCSpawn
+  - NPC
   layers:
   - Default
   - TransparentFX

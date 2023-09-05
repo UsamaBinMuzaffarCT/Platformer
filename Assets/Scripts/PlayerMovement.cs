@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -32,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool knockBackFromRight;
     [HideInInspector] public float knockBackTimer;
     [HideInInspector] public float knockBackForce;
+
+    [SerializeField] private Button jumpButton;
+    public event Action jumpActivity;
 
     #endregion
 
@@ -118,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             rb.gravityScale = 0f;
             if (forward)
             {
-                rb.velocity = new Vector2((transform.localScale.x/ Mathf.Abs(transform.localScale.x)) * dashingPower, 0f);
+                rb.velocity = new Vector2((transform.localScale.x / Mathf.Abs(transform.localScale.x)) * dashingPower, 0f);
             }
             else
             {
@@ -126,13 +131,13 @@ public class PlayerMovement : MonoBehaviour
                 rb.velocity = new Vector2(-1 * (transform.localScale.x / Mathf.Abs(transform.localScale.x)) * dashingPower, 0f);
             }
             transform.GetComponent<Collider2D>().enabled = false;
-            foreach(Transform child in transform)
+            foreach (Transform child in transform)
             {
                 try
                 {
                     child.GetComponent<Collider2D>().enabled = false;
                 }
-                catch 
+                catch
                 {
                     continue;
                 }
@@ -223,6 +228,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void OnMapDown()
+    {
+        if (!isDead)
+        {
+            if (map)
+            {
+                map = false;
+            }
+            else
+            {
+                map = true;
+            }
+        }
+    }
+
     public void Interact(InputAction.CallbackContext context)
     {
         if (!isDead && !map)
@@ -242,7 +262,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed)
         {
-            if (!isDead && !map) 
+            if (!isDead && !map)
             {
                 isAttacking = true;
                 Invoke(nameof(StopAttack), 0.1f);
@@ -256,6 +276,25 @@ public class PlayerMovement : MonoBehaviour
                     GameObject instantiatedBullet = Instantiate(fireball);
                     instantiatedBullet.transform.position = gunBarrel.transform.position;
                 }
+            }
+        }
+    }
+
+    public void OnAttackDown()
+    {
+        if (!isDead && !map)
+        {
+            isAttacking = true;
+            Invoke(nameof(StopAttack), 0.1f);
+            if (faction == Enumirators.Faction.Gunman)
+            {
+                GameObject instantiatedBullet = Instantiate(bullet);
+                instantiatedBullet.transform.position = gunBarrel.transform.position;
+            }
+            if (faction == Enumirators.Faction.Mage)
+            {
+                GameObject instantiatedBullet = Instantiate(fireball);
+                instantiatedBullet.transform.position = gunBarrel.transform.position;
             }
         }
     }
@@ -314,6 +353,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void OnDashDown()
+    {
+        if (canDash)
+        {
+            if (!isDead && !map)
+            {
+                if (dashCoroutine != null)
+                {
+                    StopCoroutine(dashCoroutine);
+                    dashCoroutine = null;
+                }
+                dashCoroutine = StartCoroutine(PerformDash());
+            }
+        }
+    }
+
     public void BackDash(InputAction.CallbackContext context)
     {
         if (context.performed && canDash)
@@ -343,7 +398,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!context.canceled)
         {
-            
+
         }
 
         if (context.performed && coyoteTimeCounter > 0f)
@@ -355,6 +410,32 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (context.canceled && rb.velocity.y > 0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            coyoteTimeCounter = 0f;
+        }
+    }
+
+    public void OnJumpDown()
+    {
+        if (isDashing)
+        {
+            return;
+        }
+        jumpBufferCounter = jumpBufferTime;
+
+        if (coyoteTimeCounter > 0f)
+        {
+            if (!isDead && !map)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            }
+        }
+    }
+
+    public void OnJumpUp()
+    {
+        if (rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             coyoteTimeCounter = 0f;
@@ -447,6 +528,35 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void OnWallJumpDown()
+    {
+        if (IsWalled())
+        {
+            isWallJumping = false;
+            wallJumpingDirection = -1 * (transform.localScale.x / Mathf.Abs(transform.localScale.x));
+            wallJumpingCounter = wallJumpingTime;
+
+            CancelInvoke(nameof(StopWallJumping));
+        }
+        else
+        {
+            wallJumpingCounter -= Time.deltaTime;
+        }
+        if (wallJumpingCounter > 0f && !IsGrounded())
+        {
+            isWallJumping = true;
+            rb.velocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpingCounter = 0f;
+
+            if ((transform.localScale.x / Mathf.Abs(transform.localScale.x)) != wallJumpingDirection)
+            {
+                isFacingRight = !isFacingRight;
+                transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            }
+            Invoke(nameof(StopWallJumping), wallJumpingDuration);
+        }
+    }
+
     #endregion
 
     #region private-functions
@@ -470,7 +580,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        isIdle = true;   
+        isIdle = true;
     }
 
     private void StopAttack()

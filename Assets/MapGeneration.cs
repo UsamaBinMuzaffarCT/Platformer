@@ -393,9 +393,4 @@ public class MapGeneration : MonoBehaviour
         }
         return generatedMap;
     }
-
-    void Update()
-    {
-        
-    }
 }

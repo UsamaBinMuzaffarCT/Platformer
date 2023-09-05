@@ -1,7 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,10 +14,13 @@ public class GameManager : MonoBehaviour
     private GameObject currentActiveRoom;
     [SerializeField] private float teleportationTimer;
     [SerializeField] private MapVisualization mapVisualization;
+    [SerializeField] private List<GameObject> prefabsNPCs;
 
     #endregion
 
     #region public-variable
+
+    public List<Classes.NPCQuest> nPCQuests = new List<Classes.NPCQuest>();
 
     #endregion
 
@@ -30,16 +32,22 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Enumirators.QuestType[] values = (Enumirators.QuestType[])Enum.GetValues(typeof(Enumirators.QuestType));
+        for (int i = 0; i < Enum.GetValues(typeof(Enumirators.QuestType)).Length; i++)
+        {
+            nPCQuests.Add(new Classes.NPCQuest { questType = values[i], count = 0 });
+        }
         players = GameObject.FindGameObjectsWithTag("Player").ToList<GameObject>();
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
     }
 
     private void Start()
     {
+        CreateNPCs();
         TakePlayersToStartRoom();
     }
 
-    
+
 
     private void Update()
     {
@@ -54,6 +62,47 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private bool ContainsNPC(GameObject room)
+    {
+        foreach(Transform child in room.transform)
+        {
+            if (child.CompareTag("NPC"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void CreateNPCs()
+    {
+        List<GameObject> roomList = new List<GameObject>();
+        foreach (Transform child in mapGenerator.gameObject.transform)
+        {
+            roomList.Add(child.gameObject);
+        }
+        foreach (GameObject npc in prefabsNPCs)
+        {
+            int random = UnityEngine.Random.Range(0, mapGenerator.GetComponent<Transform>().childCount);
+            var roomConnections = roomList[random].GetComponent<RoomConnections>();
+            while (roomConnections.id == -1 || roomConnections.id == -2 || ContainsNPC(roomList[random]))
+            {
+                random = UnityEngine.Random.Range(0, mapGenerator.GetComponent<Transform>().childCount);
+                roomConnections = roomList[random].GetComponent<RoomConnections>();
+            }
+            roomList[random].SetActive(true);
+            GameObject spawned = Instantiate(npc);
+            spawned.transform.SetParent(roomList[random].transform);
+            foreach (Transform child in roomConnections.transform)
+            {
+                if (child.CompareTag("NPCSpawn"))
+                {
+                    spawned.transform.position = child.position;
+                }
+            }
+        }
+    }
+
     private void TakePlayersToStartRoom()
     {
         GameObject startRoom = null;
@@ -62,6 +111,10 @@ public class GameManager : MonoBehaviour
             {
                 startRoom = room.room; 
                 break;
+            }
+            else
+            {
+                room.room.SetActive(false);
             }
         }
         startRoom.SetActive(true);
