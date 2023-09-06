@@ -22,14 +22,17 @@ public class HotZoneCheck : MonoBehaviour
         {
             enemyBehaviour.Flip();
         }
-        if(currentPlayer.GetComponent<PlayerMovement>().isDead == true)
+        if (currentPlayer != null)
         {
-            currentPlayer = null;
-            inRange = false;
-            gameObject.SetActive(false);
-            enemyBehaviour.triggerArea.SetActive(true);
-            enemyBehaviour.inRange = false;
-            enemyBehaviour.SelectTarget();
+            if (currentPlayer.GetComponent<PlayerMovement>().isDead == true)
+            {
+                currentPlayer = null;
+                inRange = false;
+                gameObject.SetActive(false);
+                enemyBehaviour.triggerArea.SetActive(true);
+                enemyBehaviour.inRange = false;
+                enemyBehaviour.SelectTarget();
+            }
         }
     }
 

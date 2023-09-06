@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static Classes;
 
 public class MapGeneration : MonoBehaviour
 {
@@ -13,6 +10,8 @@ public class MapGeneration : MonoBehaviour
 
     private void Awake()
     {
+        int randomSeed = 42;
+        Random.InitState(randomSeed);
         roomsScriptable = Resources.Load<RoomsScriptable>("ScriptableObjects/RoomsScriptable");
         map = GenerateMap(num);
         map = ClearTraversal(map);
@@ -322,17 +321,15 @@ public class MapGeneration : MonoBehaviour
             room.level = int.MaxValue;
         }
 
-        // Initialize the starting node's level to 0
         startingNode.level = 0;
 
-        Queue<Room> queue = new Queue<Room>();
+        Queue<Classes.Room> queue = new Queue<Classes.Room>();
         queue.Enqueue(startingNode);
 
         while (queue.Count > 0)
         {
-            Room currentRoom = queue.Dequeue();
+            Classes.Room currentRoom = queue.Dequeue();
 
-            // Update the level of neighbor rooms if lower level is found
             foreach (var neighbor in currentRoom.neighbourRooms)
             {
                 if (neighbor.level == int.MaxValue)

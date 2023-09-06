@@ -3,9 +3,10 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 using UnityEngine.UI;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     #region variables
 
@@ -42,8 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     #region private-variables
 
-    [SerializeField] private Joystick joystick;
-    //[SerializeField] private bl_Joystick joystick;
+    //[SerializeField] private Joystick joystick;
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
@@ -210,8 +210,29 @@ public class PlayerMovement : MonoBehaviour
 
     #region public-functions
 
+    public override void OnNetworkSpawn()
+    {
+        GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer();
+        isDead = false;
+        if (faction == Enumirators.Faction.Mage)
+        {
+            animationControls = gameObject.AddComponent<MageAnimationsController>();
+        }
+        else if (faction == Enumirators.Faction.Warrior)
+        {
+            animationControls = gameObject.AddComponent<WarriorAnimatorControls>();
+        }
+        else if (faction == Enumirators.Faction.Gunman)
+        {
+            animationControls = gameObject.AddComponent<GunManAnimationControls>();
+        }
+    }
     public void Map(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (!isDead)
         {
             if (context.performed)
@@ -230,6 +251,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMapDown()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (!isDead)
         {
             if (map)
@@ -243,23 +268,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void Interact(InputAction.CallbackContext context)
-    {
-        if (!isDead && !map)
-        {
-            if (context.performed)
-            {
-                interact = true;
-            }
-            if (context.canceled)
-            {
-                interact = false;
-            }
-        }
-    }
-
     public void Attack(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (context.performed)
         {
             if (!isDead && !map)
@@ -282,6 +296,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnAttackDown()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (!isDead && !map)
         {
             isAttacking = true;
@@ -301,6 +319,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void ShadowDash(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (faction.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
@@ -320,6 +342,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void ShadowBackDash(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (faction.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
@@ -339,6 +365,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (context.performed && canDash)
         {
             if (!isDead && !map)
@@ -355,6 +385,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDashDown()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (canDash)
         {
             if (!isDead && !map)
@@ -371,6 +405,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void BackDash(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (context.performed && canDash)
         {
             if (!isDead && !map)
@@ -387,6 +425,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (isDashing)
         {
             return;
@@ -418,6 +460,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJumpDown()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (isDashing)
         {
             return;
@@ -435,6 +481,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJumpUp()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -444,6 +494,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void PerformJump()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
@@ -453,6 +507,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         tempHorizontal = context.ReadValue<Vector2>().x;
         if (tempHorizontal > 0.1f)
         {
@@ -563,19 +621,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        isDead = false;
-        if (faction == Enumirators.Faction.Mage)
-        {
-            animationControls = gameObject.AddComponent<MageAnimationsController>();
-        }
-        else if (faction == Enumirators.Faction.Warrior)
-        {
-            animationControls = gameObject.AddComponent<WarriorAnimatorControls>();
-        }
-        else if (faction == Enumirators.Faction.Gunman)
-        {
-            animationControls = gameObject.AddComponent<GunManAnimationControls>();
-        }
+        
     }
 
     private void Start()
@@ -588,43 +634,47 @@ public class PlayerMovement : MonoBehaviour
         isAttacking = false;
     }
 
-    private void JoystickHorizontal()
-    {
-        if (otherInput)
-        {
-            tempHorizontal = joystick.Horizontal;
-            if (isDashing)
-            {
-                return;
-            }
-            horizontal = joystick.Horizontal;
-            if (horizontal > 0.2f)
-            {
-                isMoving = true;
-                isRunning = true;
-                isIdle = false;
-                horizontal = 1f;
-            }
-            else if (horizontal < -0.2f)
-            {
-                isMoving = true;
-                isRunning = true;
-                isIdle = false;
-                horizontal = -1f;
-            }
-            else
-            {
-                isMoving = false;
-                isRunning = false;
-            }
-        }
-    }
+    //private void JoystickHorizontal()
+    //{
+    //    if (otherInput)
+    //    {
+    //        tempHorizontal = joystick.Horizontal;
+    //        if (isDashing)
+    //        {
+    //            return;
+    //        }
+    //        horizontal = joystick.Horizontal;
+    //        if (horizontal > 0.2f)
+    //        {
+    //            isMoving = true;
+    //            isRunning = true;
+    //            isIdle = false;
+    //            horizontal = 1f;
+    //        }
+    //        else if (horizontal < -0.2f)
+    //        {
+    //            isMoving = true;
+    //            isRunning = true;
+    //            isIdle = false;
+    //            horizontal = -1f;
+    //        }
+    //        else
+    //        {
+    //            isMoving = false;
+    //            isRunning = false;
+    //        }
+    //    }
+    //}
 
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (!isDead && !map)
         {
-            JoystickHorizontal();
+            //JoystickHorizontal();
             if (horizontal != 0)
             {
                 isRunning = true;
@@ -675,6 +725,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         if (!isDead && !map)
         {
             if (isDashing)

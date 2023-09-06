@@ -52,14 +52,14 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         teleportationTimer -= Time.deltaTime;
-        if (players[0].GetComponent<PlayerMovement>().map)
-        {
-            players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(true);
-        }
-        else
-        {
-            players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(false);
-        }
+        //if (players[0].GetComponent<PlayerMovement>().map)
+        //{
+        //    players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(true);
+        //}
+        //else
+        //{
+        //    players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(false);
+        //}
     }
 
     private bool ContainsNPC(GameObject room)
