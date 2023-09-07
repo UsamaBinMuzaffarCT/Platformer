@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 6568307172176979583}
   - component: {fileID: 6405627436874129901}
   - component: {fileID: 2384698338091229349}
-  - component: {fileID: -2736568269678503896}
   - component: {fileID: 59017145461931704}
   m_Layer: 0
   m_Name: FireBall
@@ -207,20 +206,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-2736568269678503896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3718445200140177192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8deae8091111f4eb30a56c1f4e0d3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TransitionStateInfoList: []
-  m_Animator: {fileID: 6576208427472934339}
 --- !u!114 &59017145461931704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,7 +234,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 1
+  Interpolate: 0
   SlerpPosition: 0
 --- !u!1 &5887009184940952102
 GameObject:
