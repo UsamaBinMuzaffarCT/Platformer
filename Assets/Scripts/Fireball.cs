@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Fireball : MonoBehaviour
+public class Fireball : NetworkBehaviour
 {
     public float speed = 20f;
     public int damage = 40;
@@ -12,36 +14,53 @@ public class Fireball : MonoBehaviour
 
     [SerializeField] private float shotDelay = 0.1f;
     private float timer;
+    private NetworkObject networkObject;
 
     private GameObject player;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
+        NetworkSpawnManager.instance.onProjectileDestroy.AddListener(DestroyFireball);
+        networkObject = GetComponent<NetworkObject>();
         timer = 0;
-        player = GameObject.FindGameObjectWithTag("Player");
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        rb.velocity = (player.transform.localScale.x / math.abs(player.transform.localScale.x)) * transform.right * speed;
-        Vector3 localScale = transform.localScale;
-        localScale.x *= player.transform.localScale.x / math.abs(player.transform.localScale.x);
-        transform.localScale = localScale;
     }
 
     private void Update()
     {
         if (fizzleOut)
         {
-            Destroy(gameObject);
+            DestroyFireball();
         }
         timer += Time.deltaTime;
     }
 
-    private void DestroyFireball()
+    public void DestroyFireball()
     {
-        Destroy(gameObject);
+        DestroyFireballServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroyFireballServerRpc()
+    {
+        if (!IsServer)
+        {
+            DestroyFireballClientRpc();
+        }
+        else
+        {
+            networkObject.DontDestroyWithOwner = true;
+            networkObject.Despawn();
+        }
+    }
+
+    [ClientRpc]
+    private void DestroyFireballClientRpc()
+    {
+        if (!IsOwner)
+        {
+            networkObject.DontDestroyWithOwner = true;
+            networkObject.Despawn();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)

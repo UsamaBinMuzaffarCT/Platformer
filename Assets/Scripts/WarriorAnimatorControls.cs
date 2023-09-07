@@ -32,7 +32,7 @@ public class WarriorAnimatorControls : BaseAnimationControls
 
     protected override string GetAnimationState()
     {
-        if(Time.time < lockedTill)
+        if (Time.time < lockedTill)
         {
             return currentState;
         }

@@ -39,8 +39,8 @@ public abstract class BaseAnimationControls : MonoBehaviour
     protected virtual void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
-        playerSprite = GameObject.FindGameObjectWithTag("PlayerSprite");
-        animator = playerSprite.GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+        playerSprite = animator.gameObject;
         animatorsScriptable = Resources.Load<AnimatorsScriptable>("ScriptableObjects/AnimatorsScriptableObject");
 
         if (playerMovement.faction == Enumirators.Faction.Gunman)

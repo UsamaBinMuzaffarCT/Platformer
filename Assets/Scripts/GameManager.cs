@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     #region variables
 
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
         }
         players = GameObject.FindGameObjectsWithTag("Player").ToList<GameObject>();
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
+        mapGenerator.Initialize(42);
     }
 
     private void Start()

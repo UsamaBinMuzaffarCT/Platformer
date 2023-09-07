@@ -8,10 +8,9 @@ public class MapGeneration : MonoBehaviour
 
     private RoomsScriptable roomsScriptable;
 
-    private void Awake()
+    public void Initialize(int generationSeed)
     {
-        int randomSeed = 42;
-        Random.InitState(randomSeed);
+        Random.InitState(generationSeed);
         roomsScriptable = Resources.Load<RoomsScriptable>("ScriptableObjects/RoomsScriptable");
         map = GenerateMap(num);
         map = ClearTraversal(map);

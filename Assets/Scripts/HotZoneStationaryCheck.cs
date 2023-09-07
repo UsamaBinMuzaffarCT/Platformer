@@ -21,13 +21,15 @@ public class HotZoneStationaryCheck : MonoBehaviour
         {
             enemyBehaviour.Flip();
         }
-        if (currentPlayer.GetComponent<PlayerMovement>().isDead == true)
-        {
-            enemyBehaviour.inRange = false;
-            currentPlayer = null;
-            inRange = false;
-            gameObject.SetActive(false);
-            enemyBehaviour.triggerArea.SetActive(true);
+        if(currentPlayer != null) {
+            if (currentPlayer.GetComponent<PlayerMovement>().isDead == true)
+            {
+                enemyBehaviour.inRange = false;
+                currentPlayer = null;
+                inRange = false;
+                gameObject.SetActive(false);
+                enemyBehaviour.triggerArea.SetActive(true);
+            }
         }
     }
 

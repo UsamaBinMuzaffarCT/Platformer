@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
 using UnityEngine.UI;
+using Unity.Mathematics;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -16,9 +17,6 @@ public class PlayerMovement : NetworkBehaviour
     public Transform groundCheck;
     public LayerMask groundLayer;
     public float repulsionForce = 0.05f;
-
-
-    public Canvas playerCanvas;
 
     [HideInInspector] public bool isAttacking;
     [HideInInspector] public bool isIdle;
@@ -48,6 +46,7 @@ public class PlayerMovement : NetworkBehaviour
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject fireball;
+
     [SerializeField] private GameObject gunBarrel;
 
     [SerializeField] private GameObject playerCamera;
@@ -90,6 +89,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private Coroutine edgeRepulsionCoroutine = null;
     private bool edge = false;
+
+    private GameObject instantiatedBullet;
 
     #endregion
 
@@ -212,7 +213,10 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer();
+        if (IsOwner)
+        {
+            GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer(transform);
+        }
         isDead = false;
         if (faction == Enumirators.Faction.Mage)
         {
@@ -287,8 +291,7 @@ public class PlayerMovement : NetworkBehaviour
                 }
                 if (faction == Enumirators.Faction.Mage)
                 {
-                    GameObject instantiatedBullet = Instantiate(fireball);
-                    instantiatedBullet.transform.position = gunBarrel.transform.position;
+                    CreateFireballServerRpc((int)(transform.localScale.x / math.abs(transform.localScale.x)), gunBarrel.transform.position.x, gunBarrel.transform.position.y, gunBarrel.transform.position.z);
                 }
             }
         }
@@ -619,11 +622,6 @@ public class PlayerMovement : NetworkBehaviour
 
     #region private-functions
 
-    private void Awake()
-    {
-        
-    }
-
     private void Start()
     {
         isIdle = true;
@@ -632,6 +630,42 @@ public class PlayerMovement : NetworkBehaviour
     private void StopAttack()
     {
         isAttacking = false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateFireballServerRpc(int direction, float x, float y, float z)
+    {
+        if (!IsServer)
+        {
+            CreateFireballClientRpc(direction, x, y, z);
+        }
+        else
+        {
+            instantiatedBullet = Instantiate(fireball);
+            instantiatedBullet.transform.position = new Vector3(x, y, z);
+            Rigidbody2D instantiatedRb = instantiatedBullet.GetComponent<Rigidbody2D>();
+            instantiatedRb.velocity = (direction * instantiatedBullet.transform.right * speed);
+            Vector3 localScale = instantiatedBullet.transform.localScale;
+            localScale.x *= direction;
+            instantiatedBullet.transform.localScale = localScale;
+            instantiatedBullet.GetComponent<NetworkObject>().Spawn(true);
+        }
+    }
+
+    [ClientRpc]
+    private void CreateFireballClientRpc(int direction, float x, float y, float z)
+    {
+        if (!IsOwner)
+        {
+            instantiatedBullet = Instantiate(fireball);
+            instantiatedBullet.transform.position = new Vector3(x, y, z);
+            Rigidbody2D instantiatedRb = instantiatedBullet.GetComponent<Rigidbody2D>();
+            instantiatedRb.velocity = (direction * instantiatedBullet.transform.right * speed);
+            Vector3 localScale = instantiatedBullet.transform.localScale;
+            localScale.x *= direction;
+            instantiatedBullet.transform.localScale = localScale;
+            instantiatedBullet.GetComponent<NetworkObject>().Spawn(true);
+        }
     }
 
     //private void JoystickHorizontal()
