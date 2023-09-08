@@ -6,12 +6,19 @@ public class PlayerHealth : MonoBehaviour
 {
     public int health;
     [SerializeField] private float hitTimer;
+    private PlayerMovement playerMovement;
+    private void Awake()
+    {
+        playerMovement = GetComponent<PlayerMovement>();
+    }
+
     private void Update()
     {
         hitTimer -= Time.deltaTime;
         if(health <= 0)
         {
-            GetComponent<PlayerMovement>().isDead = true;
+            playerMovement.isDead = true;
+            playerMovement.n_isDead.Value = true;
         }
     }
     public void TakeDamage(int damage)

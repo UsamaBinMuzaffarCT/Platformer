@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Boss : MonoBehaviour
+public class Boss : NetworkBehaviour
 {
     List<GameObject> players;
 
     public bool isFlipped = false;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
         players = GameObject.FindGameObjectsWithTag("Player").ToList();
     }
@@ -30,9 +31,12 @@ public class Boss : MonoBehaviour
         return minDistancePlayer;
     }
 
-    public void LookAtPlayer()
+    public void LookAtPlayer(GameObject player)
     {
-        GameObject player = ClosestPlayer();
+        if(players.Count == 0)
+        {
+            return;
+        }
         Vector3 flipped = transform.localScale;
         flipped.z *= -1f;
 

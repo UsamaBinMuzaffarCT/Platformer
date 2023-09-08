@@ -25,7 +25,7 @@ public class BossRun : StateMachineBehaviour
             {
                 minDistance = thisDistance;
                 minDistancePlayer = player;
-            }            
+            }
         }
         return minDistancePlayer;
     }
@@ -41,17 +41,32 @@ public class BossRun : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        GameObject player = ClosestPlayer(animator);
-        if (player.GetComponent<PlayerMovement>().isDead)
+        if(players.Count > 1)
         {
-            animator.SetTrigger("KilledPlayer");
+            foreach(GameObject element in players)
+            {
+                if (element.GetComponent<PlayerMovement>().n_isDead.Value)
+                {
+                    players.Remove(element);
+                    break;
+                }
+            }
+        }
+        GameObject player = ClosestPlayer(animator);
+        if (player == null)
+        {
+            return;
+        }
+        if (player.GetComponent<PlayerMovement>().n_isDead.Value)
+        {
+            animator.SetBool("IsPlayerKilled", true);
             return;
         }
         else
         {
             Vector2 target = new Vector2(player.transform.position.x, animator.transform.parent.position.y);
             rb.MovePosition(Vector2.MoveTowards(animator.transform.parent.position, target, speed * Time.fixedDeltaTime));
-            rb.GetComponent<Boss>().LookAtPlayer();
+            rb.GetComponent<Boss>().LookAtPlayer(player);
             if (Vector2.Distance(player.transform.position, rb.position) <= attackRange)
             {
                 animator.SetTrigger("Attack");

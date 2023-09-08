@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EnemyControl : MonoBehaviour
+public class EnemyControl : NetworkBehaviour
 {
     [SerializeField] private EnemyBehaviour enemyBehaviour = null;
     [SerializeField] private EnemyBehaviourPatrolling EnemyBehaviourPatrolling = null;
@@ -10,7 +11,7 @@ public class EnemyControl : MonoBehaviour
     private float tempMovespeed;
     private float tempGravity;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody2D>();
         try

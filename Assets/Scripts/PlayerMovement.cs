@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
@@ -10,6 +9,20 @@ using Unity.Mathematics;
 public class PlayerMovement : NetworkBehaviour
 {
     #region variables
+
+    #region network-variables
+
+    #region private-network-variables
+
+    #endregion
+
+    #region public-network-variables
+
+    public NetworkVariable<bool> n_isDead = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Owner);
+
+    #endregion
+
+    #endregion
 
     #region public-variables
     public Enumirators.Faction faction;
@@ -217,7 +230,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer(transform);
         }
-        isDead = false;
+        n_isDead.Value = false;
         if (faction == Enumirators.Faction.Mage)
         {
             animationControls = gameObject.AddComponent<MageAnimationsController>();

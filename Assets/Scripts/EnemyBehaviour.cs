@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EnemyBehaviour : MonoBehaviour
+public class EnemyBehaviour : NetworkBehaviour
 {
     #region Public Variables
     public float attackDistance; //Minimum distance for attack
@@ -24,8 +25,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Awake()
     {
-        //Debug.Log("Started");
-        intTimer = timer; //Store the inital value of timer
+        intTimer = timer;
         anim = GetComponent<Animator>();
     }
 
@@ -78,8 +78,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Attack()
     {
-        timer = intTimer; //Reset Timer when Player enter Attack Range
-        attackMode = true; //To check if Enemy can still attack or not
+        timer = intTimer;
+        attackMode = true;
 
         anim.SetBool("canWalk", false);
         anim.SetBool("Attack", true);

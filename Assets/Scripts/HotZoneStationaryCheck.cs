@@ -22,7 +22,7 @@ public class HotZoneStationaryCheck : MonoBehaviour
             enemyBehaviour.Flip();
         }
         if(currentPlayer != null) {
-            if (currentPlayer.GetComponent<PlayerMovement>().isDead == true)
+            if (currentPlayer.GetComponent<PlayerMovement>().n_isDead.Value == true)
             {
                 enemyBehaviour.inRange = false;
                 currentPlayer = null;
