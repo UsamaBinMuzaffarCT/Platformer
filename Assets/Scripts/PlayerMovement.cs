@@ -19,6 +19,7 @@ public class PlayerMovement : NetworkBehaviour
     #region public-network-variables
 
     public NetworkVariable<bool> n_isDead = new NetworkVariable<bool>(false, writePerm: NetworkVariableWritePermission.Owner);
+    public NetworkVariable<Enumirators.Faction> n_faction = new NetworkVariable<Enumirators.Faction>(Enumirators.Faction.Mage, writePerm: NetworkVariableWritePermission.Owner);
 
     #endregion
 
@@ -224,26 +225,46 @@ public class PlayerMovement : NetworkBehaviour
 
     #region public-functions
 
+
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
         {
+            SetFactionServerRpc();
             GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer(transform);
         }
         n_isDead.Value = false;
-        if (faction == Enumirators.Faction.Mage)
+        SetFactionAnimator();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetFactionServerRpc()
+    {
+        SetFactionClientRpc();
+    }
+
+    [ClientRpc]
+    public void SetFactionClientRpc()
+    {
+        n_faction.Value = PlayerInfoHolder.Instance.playerFaction;
+    }
+
+    public void SetFactionAnimator()
+    {
+        if (n_faction.Value == Enumirators.Faction.Mage)
         {
             animationControls = gameObject.AddComponent<MageAnimationsController>();
         }
-        else if (faction == Enumirators.Faction.Warrior)
+        else if (n_faction.Value == Enumirators.Faction.Warrior)
         {
             animationControls = gameObject.AddComponent<WarriorAnimatorControls>();
         }
-        else if (faction == Enumirators.Faction.Gunman)
+        else if (n_faction.Value == Enumirators.Faction.Gunman)
         {
             animationControls = gameObject.AddComponent<GunManAnimationControls>();
         }
     }
+
     public void Map(InputAction.CallbackContext context)
     {
         if (!IsOwner)
@@ -297,12 +318,12 @@ public class PlayerMovement : NetworkBehaviour
             {
                 isAttacking = true;
                 Invoke(nameof(StopAttack), 0.1f);
-                if (faction == Enumirators.Faction.Gunman)
+                if (n_faction.Value == Enumirators.Faction.Gunman)
                 {
                     GameObject instantiatedBullet = Instantiate(bullet);
                     instantiatedBullet.transform.position = gunBarrel.transform.position;
                 }
-                if (faction == Enumirators.Faction.Mage)
+                if (n_faction.Value == Enumirators.Faction.Mage)
                 {
                     CreateFireballServerRpc((int)(transform.localScale.x / math.abs(transform.localScale.x)), gunBarrel.transform.position.x, gunBarrel.transform.position.y, gunBarrel.transform.position.z);
                 }
@@ -320,12 +341,12 @@ public class PlayerMovement : NetworkBehaviour
         {
             isAttacking = true;
             Invoke(nameof(StopAttack), 0.1f);
-            if (faction == Enumirators.Faction.Gunman)
+            if (n_faction.Value == Enumirators.Faction.Gunman)
             {
                 GameObject instantiatedBullet = Instantiate(bullet);
                 instantiatedBullet.transform.position = gunBarrel.transform.position;
             }
-            if (faction == Enumirators.Faction.Mage)
+            if (n_faction.Value == Enumirators.Faction.Mage)
             {
                 GameObject instantiatedBullet = Instantiate(fireball);
                 instantiatedBullet.transform.position = gunBarrel.transform.position;
@@ -339,7 +360,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             return;
         }
-        if (faction.Equals(Enumirators.Faction.Mage))
+        if (n_faction.Value.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
             {
@@ -362,7 +383,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             return;
         }
-        if (faction.Equals(Enumirators.Faction.Mage))
+        if (n_faction.Value.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
             {

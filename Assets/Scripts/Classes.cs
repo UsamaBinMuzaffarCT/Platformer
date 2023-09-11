@@ -61,4 +61,10 @@ public class Classes : MonoBehaviour
         public Enumirators.EnemyType enemyType;
         public GameObject prefab;
     }
+
+    public class OwnerToFaction
+    {
+        int OrderID;
+        Enumirators.Faction faction;
+    }
 }

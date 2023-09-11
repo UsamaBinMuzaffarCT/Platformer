@@ -15,6 +15,13 @@ public class WarriorAnimatorControls : BaseAnimationControls
     private string attack = "PixelCharAnim_Sword_quickAtk";
     private string backDash = "PixelCharAnim_Sword_slideAtk";
     private string death = "PixelCharAnim_Sword_death";
+    //private string idle = "Warrior_idle";
+    //private string run = "Warrior_run";
+    //private string jump = "Warrior_jump";
+    //private string dash = "Warrior_dash";
+    //private string attack = "Warrior_attack";
+    //private string backDash = "Warrior_dash";
+    //private string death = "Warrior_death";
 
     #endregion
 

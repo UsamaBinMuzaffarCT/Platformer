@@ -433,6 +433,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   n_isDead:
     m_InternalValue: 0
+  n_faction:
+    m_InternalValue: 1
   faction: 1
   rb: {fileID: 6981507186029202917}
   groundCheck: {fileID: 5323746231306651456}
@@ -684,7 +686,7 @@ MonoBehaviour:
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
   Interpolate: 0
-  SlerpPosition: 1
+  SlerpPosition: 0
 --- !u!114 &-7569147653540793015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1024,7 +1026,7 @@ Animator:
   m_GameObject: {fileID: 6802536349007229628}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 45c596d4dcb2742089af3f717fab7de4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2b18dcbe5727245238ac0e19b07b0b5a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

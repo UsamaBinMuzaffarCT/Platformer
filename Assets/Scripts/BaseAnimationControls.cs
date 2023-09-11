@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class BaseAnimationControls : MonoBehaviour
+public abstract class BaseAnimationControls : NetworkBehaviour
 {
     #region variables
 
@@ -43,15 +44,15 @@ public abstract class BaseAnimationControls : MonoBehaviour
         playerSprite = animator.gameObject;
         animatorsScriptable = Resources.Load<AnimatorsScriptable>("ScriptableObjects/AnimatorsScriptableObject");
 
-        if (playerMovement.faction == Enumirators.Faction.Gunman)
+        if (playerMovement.n_faction.Value == Enumirators.Faction.Gunman)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Gunman).controller;
         }
-        else if(playerMovement.faction == Enumirators.Faction.Warrior)
+        else if(playerMovement.n_faction.Value == Enumirators.Faction.Warrior)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Warrior).controller;
         }
-        else if(playerMovement.faction == Enumirators.Faction.Mage)
+        else if(playerMovement.n_faction.Value == Enumirators.Faction.Mage)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Mage).controller;
         }
