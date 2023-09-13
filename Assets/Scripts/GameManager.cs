@@ -10,6 +10,7 @@ public class GameManager : NetworkBehaviour
 
     #region private-variables
 
+    private List<GameObject> authGameObjects;
     private List<GameObject> players;
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
@@ -33,12 +34,13 @@ public class GameManager : NetworkBehaviour
 
     private void Awake()
     {
+        authGameObjects = new List<GameObject>();
         Enumirators.QuestType[] values = (Enumirators.QuestType[])Enum.GetValues(typeof(Enumirators.QuestType));
         for (int i = 0; i < Enum.GetValues(typeof(Enumirators.QuestType)).Length; i++)
         {
             nPCQuests.Add(new Classes.NPCQuest { questType = values[i], count = 0 });
         }
-        players = GameObject.FindGameObjectsWithTag("Player").ToList<GameObject>();
+        players = GameObject.FindGameObjectsWithTag("Player").ToList();
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
         mapGenerator.Initialize(42);
     }

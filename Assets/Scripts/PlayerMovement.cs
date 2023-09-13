@@ -228,13 +228,16 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        
+        n_isDead.Value = false;
+    }
+
+    public void ParentCamera()
+    {
         if (IsOwner)
         {
-            SetFactionServerRpc();
             GameObject.FindWithTag("MainCamera").GetComponent<FollowPlayer>().SetPlayer(transform);
         }
-        n_isDead.Value = false;
-        SetFactionAnimator();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -246,20 +249,21 @@ public class PlayerMovement : NetworkBehaviour
     [ClientRpc]
     public void SetFactionClientRpc()
     {
-        n_faction.Value = PlayerInfoHolder.Instance.playerFaction;
+        faction = PlayerInfoHolder.Instance.playerFaction;
     }
 
-    public void SetFactionAnimator()
+    public void SetFactionAnimator(Enumirators.Faction faction)
     {
-        if (n_faction.Value == Enumirators.Faction.Mage)
+        this.faction = faction;
+        if (faction == Enumirators.Faction.Mage)
         {
             animationControls = gameObject.AddComponent<MageAnimationsController>();
         }
-        else if (n_faction.Value == Enumirators.Faction.Warrior)
+        else if (faction == Enumirators.Faction.Warrior)
         {
             animationControls = gameObject.AddComponent<WarriorAnimatorControls>();
         }
-        else if (n_faction.Value == Enumirators.Faction.Gunman)
+        else if (faction == Enumirators.Faction.Gunman)
         {
             animationControls = gameObject.AddComponent<GunManAnimationControls>();
         }
@@ -318,12 +322,12 @@ public class PlayerMovement : NetworkBehaviour
             {
                 isAttacking = true;
                 Invoke(nameof(StopAttack), 0.1f);
-                if (n_faction.Value == Enumirators.Faction.Gunman)
+                if (faction == Enumirators.Faction.Gunman)
                 {
                     GameObject instantiatedBullet = Instantiate(bullet);
                     instantiatedBullet.transform.position = gunBarrel.transform.position;
                 }
-                if (n_faction.Value == Enumirators.Faction.Mage)
+                if (faction == Enumirators.Faction.Mage)
                 {
                     CreateFireballServerRpc((int)(transform.localScale.x / math.abs(transform.localScale.x)), gunBarrel.transform.position.x, gunBarrel.transform.position.y, gunBarrel.transform.position.z);
                 }
@@ -341,12 +345,12 @@ public class PlayerMovement : NetworkBehaviour
         {
             isAttacking = true;
             Invoke(nameof(StopAttack), 0.1f);
-            if (n_faction.Value == Enumirators.Faction.Gunman)
+            if (faction == Enumirators.Faction.Gunman)
             {
                 GameObject instantiatedBullet = Instantiate(bullet);
                 instantiatedBullet.transform.position = gunBarrel.transform.position;
             }
-            if (n_faction.Value == Enumirators.Faction.Mage)
+            if (faction == Enumirators.Faction.Mage)
             {
                 GameObject instantiatedBullet = Instantiate(fireball);
                 instantiatedBullet.transform.position = gunBarrel.transform.position;
@@ -360,7 +364,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             return;
         }
-        if (n_faction.Value.Equals(Enumirators.Faction.Mage))
+        if (faction.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
             {
@@ -383,7 +387,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             return;
         }
-        if (n_faction.Value.Equals(Enumirators.Faction.Mage))
+        if (faction.Equals(Enumirators.Faction.Mage))
         {
             if (context.performed && canDash)
             {

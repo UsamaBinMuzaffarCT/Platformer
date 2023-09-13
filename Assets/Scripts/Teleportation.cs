@@ -12,7 +12,6 @@ public class Teleportation : MonoBehaviour
     {
         gameManager = GameObject.FindWithTag("GameManager").transform.GetComponent<GameManager>();
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.transform.CompareTag("Player"))

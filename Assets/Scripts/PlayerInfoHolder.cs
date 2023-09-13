@@ -7,6 +7,7 @@ public class PlayerInfoHolder : NetworkBehaviour
 {
     public static PlayerInfoHolder Instance { get; private set; }
     public Enumirators.Faction playerFaction = Enumirators.Faction.Mage;
+    public int factionID = 1;
 
     private void Awake()
     {
