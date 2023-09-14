@@ -18,7 +18,6 @@ TagManager:
   - SpawnLocation
   - NPCSpawn
   - NPC
-  - NetworkAuth
   layers:
   - Default
   - TransparentFX
