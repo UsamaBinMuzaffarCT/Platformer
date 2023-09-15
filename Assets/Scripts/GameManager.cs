@@ -8,12 +8,25 @@ public class GameManager : NetworkBehaviour
 {
     #region variables
 
+    public static GameManager Instance { get; private set; }
+
+    #region network-variables
+
+    public NetworkVariable<int> n_teleportationTouchCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> n_connectedClientCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public GameObject startRoom;
+    public float teleportationTimer;
+
+
+    #endregion
+
     #region private-variables
 
     private List<GameObject> players;
+    private GameObject player;
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
-    [SerializeField] private float teleportationTimer;
+    [SerializeField] private Canvas playerCanvas;
     [SerializeField] private MapVisualization mapVisualization;
     [SerializeField] private List<GameObject> prefabsNPCs;
 
@@ -33,19 +46,24 @@ public class GameManager : NetworkBehaviour
 
     private void Awake()
     {
+        Instance = this;
+        
+        Initialize();
+    }
+
+    private void Initialize()
+    {
         Enumirators.QuestType[] values = (Enumirators.QuestType[])Enum.GetValues(typeof(Enumirators.QuestType));
         for (int i = 0; i < Enum.GetValues(typeof(Enumirators.QuestType)).Length; i++)
         {
             nPCQuests.Add(new Classes.NPCQuest { questType = values[i], count = 0 });
         }
-        players = GameObject.FindGameObjectsWithTag("Player").ToList<GameObject>();
+        players = GameObject.FindGameObjectsWithTag("Player").ToList();
+        player = players.Find(x => x.GetComponent<PlayerMovement>().IsOwner == true);
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
-        mapGenerator.Initialize(42);
-    }
-
-    private void Start()
-    {
+        mapGenerator.Initialize(NetworkManagement.Instance.n_mapSeed.Value);
         CreateNPCs();
+        NetworkManagement.Instance.EnableAllPlayers();
         TakePlayersToStartRoom();
     }
 
@@ -54,14 +72,18 @@ public class GameManager : NetworkBehaviour
     private void Update()
     {
         teleportationTimer -= Time.deltaTime;
-        //if (players[0].GetComponent<PlayerMovement>().map)
-        //{
-        //    players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    players[0].GetComponent<PlayerMovement>().playerCanvas.gameObject.SetActive(false);
-        //}
+        if (IsServer)
+        {
+            n_connectedClientCount.Value = NetworkManager.Singleton.ConnectedClients.Count;
+        }
+        if (player.GetComponent<PlayerMovement>().map)
+        {
+            playerCanvas.gameObject.SetActive(true);
+        }
+        else
+        {
+            playerCanvas.gameObject.SetActive(false);
+        }
     }
 
     private bool ContainsNPC(GameObject room)
@@ -107,7 +129,7 @@ public class GameManager : NetworkBehaviour
 
     private void TakePlayersToStartRoom()
     {
-        GameObject startRoom = null;
+        startRoom = null;
         foreach(Classes.Room room in mapGenerator.map.rooms) {
             if(room.id == -1)
             {
@@ -146,6 +168,28 @@ public class GameManager : NetworkBehaviour
             teleportationTimer = 3f;
         }
     }
+
+    #endregion
+
+    #region rpcs
+
+    //[ServerRpc(RequireOwnership = false)]
+    //public void incrementTeleoprtationTouchCountServerRpc()
+    //{
+    //    n_teleportationTouchCount.Value += 1;
+    //}
+
+    //[ServerRpc(RequireOwnership = false)]
+    //public void deccrementTeleoprtationTouchCountServerRpc()
+    //{
+    //    n_teleportationTouchCount.Value -= 1;
+    //}
+
+    //[ServerRpc(RequireOwnership = false)]
+    //public void resetTeleoprtationTouchCountServerRpc()
+    //{
+    //    n_teleportationTouchCount.Value = 0;
+    //}
 
     #endregion
 

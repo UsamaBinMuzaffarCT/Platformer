@@ -13,4 +13,8 @@ public class PlayerInfoHolder : NetworkBehaviour
         Instance = this;
         DontDestroyOnLoad(this);
     }
+    private void Start()
+    {
+        //NetworkManagement.Instance.AddPlayerAndDisable();
+    }
 }

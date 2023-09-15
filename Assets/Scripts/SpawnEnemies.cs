@@ -15,7 +15,7 @@ public class SpawnEnemies : MonoBehaviour
 
     #region functions
 
-    private void Awake()
+    private void Start()
     {
         spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
         List<Classes.Enemy> enemies = spawnableEnemies.enemies;

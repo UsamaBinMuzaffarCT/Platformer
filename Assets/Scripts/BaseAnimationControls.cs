@@ -44,15 +44,15 @@ public abstract class BaseAnimationControls : NetworkBehaviour
         playerSprite = animator.gameObject;
         animatorsScriptable = Resources.Load<AnimatorsScriptable>("ScriptableObjects/AnimatorsScriptableObject");
 
-        if (playerMovement.n_faction.Value == Enumirators.Faction.Gunman)
+        if (playerMovement.faction == Enumirators.Faction.Gunman)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Gunman).controller;
         }
-        else if(playerMovement.n_faction.Value == Enumirators.Faction.Warrior)
+        else if(playerMovement.faction == Enumirators.Faction.Warrior)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Warrior).controller;
         }
-        else if(playerMovement.n_faction.Value == Enumirators.Faction.Mage)
+        else if(playerMovement.faction == Enumirators.Faction.Mage)
         {
             animator.runtimeAnimatorController = animatorsScriptable.factionAnimators.Find(x => x.faction == Enumirators.Faction.Mage).controller;
         }

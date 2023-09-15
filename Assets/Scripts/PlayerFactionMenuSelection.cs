@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -35,7 +36,13 @@ public class PlayerFactionMenuSelection : MonoBehaviour
 
     private void Start()
     {
+        SetDefaultFaction();
+    }
+
+    private void SetDefaultFaction()
+    {
         PlayerInfoHolder.Instance.playerFaction = Enumirators.Faction.Mage;
+        NetworkManagement.Instance.AddFactionInfoToListsServerRpc(NetworkManager.Singleton.LocalClientId, 1);
     }
 
     private void SetAnimator(RuntimeAnimatorController controller)
@@ -48,23 +55,26 @@ public class PlayerFactionMenuSelection : MonoBehaviour
     {
         playerFaction = Enumirators.Faction.Warrior;
         SetAnimator(warriorAnimatorController);
+        NetworkManagement.Instance.AddFactionInfoToListsServerRpc(NetworkManager.Singleton.LocalClientId, 0);
     }
 
     private void SetGunmanFaction()
     {
         playerFaction = Enumirators.Faction.Gunman;
         SetAnimator(gunmanAnimatorController);
+        NetworkManagement.Instance.AddFactionInfoToListsServerRpc(NetworkManager.Singleton.LocalClientId, 2);
     }
 
     private void SetMageFaction()
     {
         playerFaction = Enumirators.Faction.Mage;
         SetAnimator(mageAnimatorController);
+        NetworkManagement.Instance.AddFactionInfoToListsServerRpc(NetworkManager.Singleton.LocalClientId, 1);
     }
 
     private void StartGame()
     {
-        SceneManager.LoadScene(1);
+        NetworkManager.Singleton.SceneManager.LoadScene("SampleScene",LoadSceneMode.Single);
     }
 
     #endregion
