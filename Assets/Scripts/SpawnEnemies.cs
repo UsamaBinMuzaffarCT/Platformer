@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class SpawnEnemies : MonoBehaviour
@@ -32,6 +33,7 @@ public class SpawnEnemies : MonoBehaviour
             if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
             {
                 GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
+                enemy.GetComponent<NetworkObject>().Spawn();
                 enemy.transform.SetParent(transform);
                 enemy.transform.position = location.position;
             }
@@ -45,12 +47,14 @@ public class SpawnEnemies : MonoBehaviour
                 rightLimit.transform.SetParent(transform);
                 rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
                 GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
+                enemy.GetComponent<NetworkObject>().Spawn();
                 enemy.transform.SetParent(transform);
                 EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
                 enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
                 enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
                 enemyBehaviourPatrolling.enabled = true;
                 enemy.transform.position = location.position;
+            
             }
         }
     }

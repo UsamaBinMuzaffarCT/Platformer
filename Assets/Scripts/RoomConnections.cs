@@ -37,11 +37,14 @@ public class RoomConnections : MonoBehaviour
     private List<GameObject> FindTeleportationPoints()
     {
         List<GameObject> list = new List<GameObject>();
+        int i = 0;
         foreach (Transform child in transform)
         {
             if(child.tag == "TeleportationPoint")
             {
+                child.GetComponent<Teleportation>().id = i;
                 list.Add(child.gameObject);
+                i++;
             }
         }
         return list;

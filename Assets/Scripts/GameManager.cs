@@ -13,10 +13,9 @@ public class GameManager : NetworkBehaviour
     #region network-variables
 
     public NetworkVariable<int> n_teleportationTouchCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> n_connectedClientCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    //public NetworkVariable<int> n_connectedClientCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
     public GameObject startRoom;
     public float teleportationTimer;
-
 
     #endregion
 
@@ -72,10 +71,10 @@ public class GameManager : NetworkBehaviour
     private void Update()
     {
         teleportationTimer -= Time.deltaTime;
-        if (IsServer)
-        {
-            n_connectedClientCount.Value = NetworkManager.Singleton.ConnectedClients.Count;
-        }
+        //if (IsServer)
+        //{
+        //    n_connectedClientCount.Value = NetworkManager.Singleton.ConnectedClients.Count;
+        //}
         if (player.GetComponent<PlayerMovement>().map)
         {
             playerCanvas.gameObject.SetActive(true);
@@ -149,6 +148,30 @@ public class GameManager : NetworkBehaviour
         currentActiveRoom = startRoom;
     }
 
+    private GameObject GetNextRoom(int id)
+    {
+        foreach(Transform child in mapGenerator.gameObject.transform)
+        {
+            if(child.GetComponent<RoomConnections>().id == id)
+            {
+                return child.gameObject;
+            }
+        }
+        return null;
+    }
+
+    private GameObject GetNextRoomTeleportationPoint(GameObject nextRoom, int teleportationPointID)
+    {
+        foreach(GameObject teleportationPoint in nextRoom.GetComponent<RoomConnections>().teleportationPoints)
+        {
+            if(teleportationPoint.GetComponent<Teleportation>().id == teleportationPointID)
+            {
+                return teleportationPoint;
+            }
+        }
+        return null;
+    }
+
     #endregion
 
     #region public-functions
@@ -173,23 +196,62 @@ public class GameManager : NetworkBehaviour
 
     #region rpcs
 
-    //[ServerRpc(RequireOwnership = false)]
-    //public void incrementTeleoprtationTouchCountServerRpc()
-    //{
-    //    n_teleportationTouchCount.Value += 1;
-    //}
+    [ServerRpc]
+    public void TeleportToNextRoomServerRpc(int nextRoomID, int teleportationPointID)
+    {
+        TeleportToNextRoomClientRpc(nextRoomID, teleportationPointID);
+    }
 
-    //[ServerRpc(RequireOwnership = false)]
-    //public void deccrementTeleoprtationTouchCountServerRpc()
-    //{
-    //    n_teleportationTouchCount.Value -= 1;
-    //}
+    [ClientRpc]
+    public void TeleportToNextRoomClientRpc(int nextRoomID, int teleportationPointID)
+    {
+        if (teleportationTimer < 0)
+        {
+            GameObject nextRoom = GetNextRoom(nextRoomID);
+            if (nextRoom != null)
+            {
+                GameObject nextRoomTeleportPoint = GetNextRoomTeleportationPoint(nextRoom, teleportationPointID);
+                if(nextRoomTeleportPoint != null)
+                {
+                    currentActiveRoom.SetActive(false);
+                    nextRoomTeleportPoint.transform.parent.gameObject.SetActive(true);
+                    mapVisualization.SetActiveColor(nextRoomTeleportPoint.GetComponentInParent<RoomConnections>().id);
+                    currentActiveRoom = nextRoomTeleportPoint.transform.parent.gameObject;
+                    foreach (var player in players)
+                    {
+                        player.transform.position = nextRoomTeleportPoint.transform.position;
+                    }
+                    teleportationTimer = 3f;
+                }
+            }
+            
+        }
+    }
 
-    //[ServerRpc(RequireOwnership = false)]
-    //public void resetTeleoprtationTouchCountServerRpc()
-    //{
-    //    n_teleportationTouchCount.Value = 0;
-    //}
+    [ServerRpc(RequireOwnership = false)]
+    public void IncrementTeleoprtationTouchCountServerRpc(int nextRoomID, int teleportationPointID)
+    {
+        n_teleportationTouchCount.Value += 1;
+        if (IsServer)
+        {
+            if(n_teleportationTouchCount.Value >= NetworkManager.ConnectedClients.Count)
+            {
+                TeleportToNextRoomServerRpc(nextRoomID, teleportationPointID);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DeccrementTeleoprtationTouchCountServerRpc()
+    {
+        n_teleportationTouchCount.Value -= 1;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ResetTeleoprtationTouchCountServerRpc()
+    {
+        n_teleportationTouchCount.Value = 0;
+    }
 
     #endregion
 
