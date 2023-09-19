@@ -23,7 +23,7 @@ public class NetworkManagerUI : MonoBehaviour
         hostBtn.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-            //NetworkManager.Singleton.SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+            NetworkManager.Singleton.SceneManager.LoadScene("Menu", LoadSceneMode.Single);
         });
     }
 }

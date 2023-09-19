@@ -67,12 +67,10 @@ public class GameManager : NetworkBehaviour
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
         mapGenerator.Initialize(NetworkManagement.Instance.n_mapSeed.Value);
         CreateNPCs();
-        CreateEnemies();
         NetworkManagement.Instance.EnableAllPlayers();
         TakePlayersToStartRoom();
+        CreateEnemies();
     }
-
-
 
     private void Update()
     {
@@ -143,7 +141,12 @@ public class GameManager : NetworkBehaviour
 
     private void CreateEnemies()
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        else 
         {
             spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
             foreach (Classes.Room room in mapGenerator.map.rooms)
@@ -157,8 +160,8 @@ public class GameManager : NetworkBehaviour
                     int randomEnemy = UnityEngine.Random.Range(0, enemies.Count);
                     if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
                     {
-                        //GameObject enemy = spawner.SpawnEnemy(enemies[randomEnemy].prefab, enemies[randomEnemy].enemyType, location);
-                        //enemiesList.Add(enemy);
+                        GameObject enemy = spawner.SpawnEnemy(enemies[randomEnemy].prefab, enemies[randomEnemy].enemyType, location);                        
+                        enemiesList.Add(enemy);
                     }
                     else
                     {
