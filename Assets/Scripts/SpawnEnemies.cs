@@ -47,8 +47,8 @@ public class SpawnEnemies : MonoBehaviour
                 leftLimit.GetComponent<NetworkObject>().Spawn();
                 GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
                 EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
-                enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
-                enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
+                enemyBehaviourPatrolling.leftLimit.Value = leftLimit.transform.position;
+                enemyBehaviourPatrolling.rightLimit.Value = rightLimit.transform.position;
                 enemyBehaviourPatrolling.enabled = true;
                 enemy.transform.position = location.position; //
                 enemy.GetComponent<NetworkObject>().Spawn();

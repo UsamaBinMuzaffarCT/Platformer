@@ -10,9 +10,10 @@ public class EnemyBehaviourPatrolling : NetworkBehaviour
     public float moveSpeed;
     public float timer; 
     public bool inRange;
-    public Transform target;
-    public Transform leftLimit;
-    public Transform rightLimit;
+    public Vector3 target;
+
+    public NetworkVariable<Vector3> leftLimit = new NetworkVariable<Vector3>(Vector3.zero, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<Vector3> rightLimit = new NetworkVariable<Vector3>(Vector3.zero, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
     public GameObject hotZone;
     public GameObject triggerArea;
     #endregion
@@ -62,7 +63,7 @@ public class EnemyBehaviourPatrolling : NetworkBehaviour
 
     private void EnemyLogic()
     {
-        distance = Vector2.Distance(transform.position, target.position);
+        distance = Vector2.Distance(transform.position, target);
 
         if (distance > attackDistance)
         {
@@ -86,7 +87,7 @@ public class EnemyBehaviourPatrolling : NetworkBehaviour
 
         if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Enemy_attack"))
         {
-            Vector2 targetPosition = new Vector2(target.position.x, transform.position.y);
+            Vector2 targetPosition = new Vector2(target.x, transform.position.y);
 
             transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         }
@@ -127,21 +128,21 @@ public class EnemyBehaviourPatrolling : NetworkBehaviour
 
     private bool InsideOfLimits()
     {
-        return transform.position.x > leftLimit.position.x && transform.position.x < rightLimit.position.x;
+        return transform.position.x > leftLimit.Value.x && transform.position.x < rightLimit.Value.x;
     }
 
     public void SelectTarget()
     {
-        float distanceToLeft = Vector3.Distance(transform.position, leftLimit.position);
-        float distanceToRight = Vector3.Distance(transform.position, rightLimit.position);
+        float distanceToLeft = Vector3.Distance(transform.position, leftLimit.Value);
+        float distanceToRight = Vector3.Distance(transform.position, rightLimit.Value);
 
         if (distanceToLeft > distanceToRight)
         {
-            target = leftLimit;
+            target = leftLimit.Value;
         }
         else
         {
-            target = rightLimit;
+            target = rightLimit.Value;
         }
 
         Flip();
@@ -150,7 +151,7 @@ public class EnemyBehaviourPatrolling : NetworkBehaviour
     public void Flip()
     {
         Vector3 rotation = transform.eulerAngles;
-        if (transform.position.x > target.position.x)
+        if (transform.position.x > target.x)
         {
             rotation.y = 180;
         }

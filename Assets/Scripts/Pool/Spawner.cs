@@ -9,10 +9,10 @@ public class Spawner : MonoBehaviour
     NetworkObjectPool m_ObjectPool;
 
     [SerializeField]
-    private int m_Amount = 4;
+    private float patrollingDistance = 4.5f;
 
     [SerializeField]
-    private GameObject m_Enemy;
+    private GameObject emptyPrefab;
     [SerializeField] private EnemiesScriptable spawnableEnemies;
 
     // Start is called before the first frame update
@@ -28,44 +28,31 @@ public class Spawner : MonoBehaviour
         // Invoke("SpawnEnemy", 2f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.P) && NetworkManager.Singleton.IsServer)
-        //{
-        //    SpawnEnemy();
-        //}
-    }
-
-    public GameObject SpawnEnemy(GameObject prefab, Enumirators.EnemyType enemyType, Transform locataion)
+    public GameObject SpawnEnemy(GameObject prefab, Enumirators.EnemyType enemyType, Transform location, int roomID)
     {
         GameObject go = m_ObjectPool.GetNetworkObject(prefab).gameObject;
-        go.transform.position = locataion.position;
+        go.transform.position = location.position;
+        go.GetComponent<Enemy>().roomID.Value = roomID;
         go.GetComponent<NetworkObject>().Spawn(true);
         return go;
-        //foreach(var item in spawnableEnemies.enemies)
+        if (enemyType == Enumirators.EnemyType.Stationary)
+        {
+            
+        }
+        //else
         //{
-        //    if(item.enemyType == Enumirators.EnemyType.Stationary)
-        //    {
-        //        GameObject go = m_ObjectPool.GetNetworkObject(item.prefab).gameObject;
-        //        go.GetComponent<NetworkObject>().Spawn(true); // TODO
-        //    }
-
-        //    //for (int i = 0; i < m_Amount; i++)
-        //    //{
-        //    //    //go.transform.position = new Vector3(Random.Range(-40, 40), Random.Range(-40, 40));
-
-        //    //    //go.transform.localScale = new Vector3(4, 4, 4);
-        //    //    //go.GetComponent<Enemy>().Size.Value = 4;
-
-        //    //    //float dx = Random.Range(-40, 40) / 10.0f;
-        //    //    //float dy = Random.Range(-40, 40) / 10.0f;
-        //    //    //float dir = Random.Range(-40, 40);
-        //    //    //go.transform.rotation = Quaternion.Euler(0, 0, dir);
-        //    //    //go.GetComponent<Rigidbody2D>().angularVelocity = dir;
-        //    //    //go.GetComponent<Rigidbody2D>().velocity = new Vector2(dx, dy);
-        //    //    //go.GetComponent<Enemy>().enemyPrefab = item.prefab;
-        //    //}
+        //    Transform spawnLocation = location;
+        //    GameObject left = m_ObjectPool.GetNetworkObject(emptyPrefab).gameObject;
+        //    left.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+        //    GameObject right = m_ObjectPool.GetNetworkObject(emptyPrefab).gameObject;
+        //    right.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+        //    GameObject go = m_ObjectPool.GetNetworkObject(prefab).gameObject;
+        //    go.transform.position = location.position;
+        //    go.GetComponent<Enemy>().roomID.Value = roomID;
+        //    EnemyBehaviourPatrolling enemyBehaviourPatrolling = go.GetComponent<EnemyBehaviourPatrolling>();
+        //    enemyBehaviourPatrolling.leftLimit.Value = left.transform.position;
+        //    enemyBehaviourPatrolling.rightLimit.Value = right.transform.position;
+        //    return go;
         //}
     }
 }

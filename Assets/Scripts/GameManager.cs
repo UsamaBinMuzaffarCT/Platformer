@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using static Classes;
 
 public class GameManager : NetworkBehaviour
 {
@@ -24,7 +25,7 @@ public class GameManager : NetworkBehaviour
     private GameObject player;
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
-    private List<List<GameObject>> enemies = new List<List<GameObject>>();
+    public List<GameObject> enemies = new List<GameObject>();
     private float patrollingDistance = 4.5f;
     private Spawner spawner;
     [SerializeField] private GameObject emptyGameObject;
@@ -32,6 +33,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private MapVisualization mapVisualization;
     [SerializeField] private List<GameObject> prefabsNPCs;
     [SerializeField] private EnemiesScriptable spawnableEnemies;
+
+    
 
     #endregion
 
@@ -67,9 +70,10 @@ public class GameManager : NetworkBehaviour
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
         mapGenerator.Initialize(NetworkManagement.Instance.n_mapSeed.Value);
         CreateNPCs();
+        CreateEnemies();
+        GetEnemyObject();
         NetworkManagement.Instance.EnableAllPlayers();
         TakePlayersToStartRoom();
-        CreateEnemies();
     }
 
     private void Update()
@@ -146,73 +150,79 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
-        else 
+        else
         {
+            //List<GameObject> temp = GameObject.FindGameObjectsWithTag("Enemy").ToList();
+            //foreach(var item in temp)
+            //{
+            //    if (item.GetComponent<Enemy>().roomID != -3)
+            //    {
+            //        enemies.Add(item);
+            //    }
+            //}
+
+
             spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
             foreach (Classes.Room room in mapGenerator.map.rooms)
             {
                 List<Transform> spawnLocations = GetSpawnLocations(room.room.transform);
                 List<Classes.Enemy> enemies = spawnableEnemies.enemies;
-                List<GameObject> enemiesList = new List<GameObject>();
+                //List<GameObject> enemiesList = new List<GameObject>();
 
                 foreach (Transform location in spawnLocations)
                 {
                     int randomEnemy = UnityEngine.Random.Range(0, enemies.Count);
                     if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
                     {
-                        GameObject enemy = spawner.SpawnEnemy(enemies[randomEnemy].prefab, enemies[randomEnemy].enemyType, location);                        
-                        enemiesList.Add(enemy);
-                    }
-                    else
-                    {
-                        //Transform spawnLocation = location;
-                        //GameObject leftLimit = Instantiate(emptyGameObject);
-                        //leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                        //if (NetworkManager.Singleton.IsServer)
-                        //{
-                        //    leftLimit.GetComponent<NetworkObject>().Spawn();
-                        //}
-                        //GameObject rightLimit = Instantiate(emptyGameObject);
-                        //rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                        //if (NetworkManager.Singleton.IsServer)
-                        //{
-                        //    rightLimit.GetComponent<NetworkObject>().Spawn();
-                        //}
-                        //GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                        //EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
-                        //enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
-                        //enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
-                        //enemyBehaviourPatrolling.enabled = true;
-                        //enemy.transform.position = location.position;
-                        //if (NetworkManager.Singleton.IsServer)
-                        //{
-                        //    enemy.GetComponent<NetworkObject>().Spawn();
-                        //}
-                        //enemiesList.Add(enemy);
+                        spawner.SpawnEnemy(enemies[randomEnemy].prefab, enemies[randomEnemy].enemyType, location, room.id);
                     }
                 }
-                this.enemies.Add(enemiesList);
-                DisableEnemiesOnIndex(this.enemies.Count - 1);
             }
         }
-        
     }
 
-    private void DisableEnemiesOnIndex(int i)
+    public void GetEnemyObject()
     {
-        foreach(GameObject enemy in enemies[i])
+        List<GameObject> temp = GameObject.FindGameObjectsWithTag("Enemy").ToList();
+        foreach (var item in temp)
         {
-            enemy.SetActive(false);
+            if (item.activeInHierarchy)
+            {
+                if (item.GetComponent<Enemy>())
+                {
+                    if (item.GetComponent<Enemy>().roomID.Value != -3)
+                    {
+                        enemies.Add(item);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private void EnableEnemiesWithRoomID(int id)
+    {
+        foreach(GameObject enemy in enemies)
+        {
+            if(enemy.GetComponent<Enemy>().roomID.Value != id)
+            {
+                enemy.SetActive(false);
+            }
+            else
+            {
+                enemy.SetActive(true);
+            }
         }
     }
 
-    private void EnableEnemiesOnIndex(int i)
-    {
-        foreach (GameObject enemy in enemies[i])
-        {
-            enemy.SetActive(true);
-        }
-    }
+    //private void EnableEnemiesOnIndex(int i)
+    //{
+    //    foreach (GameObject enemy in enemies[i])
+    //    {
+    //        enemy.SetActive(true);
+    //    }
+    //}
 
     private void TakePlayersToStartRoom()
     {
@@ -222,7 +232,7 @@ public class GameManager : NetworkBehaviour
             if(room.id == -1)
             {
                 startRoom = room.room;
-                EnableEnemiesOnIndex(i);
+                EnableEnemiesWithRoomID(-1);
             }
             else
             {
@@ -236,6 +246,30 @@ public class GameManager : NetworkBehaviour
             player.transform.position = startRoom.GetComponent<RoomConnections>().startPoint.transform.position;
         }
         currentActiveRoom = startRoom;
+
+        SetEnemiesRoom();
+    }
+
+    public void SetEnemiesRoom()
+    {
+        DisableAllEnemies();
+
+        foreach (var item in enemies)
+        {
+            Debug.LogError("item room id: " + item.GetComponent<Enemy>().roomID + " and Active room id is: " + currentActiveRoom.GetComponent<RoomConnections>().id);
+            if (item.GetComponent<Enemy>().roomID.Value == currentActiveRoom.GetComponent<RoomConnections>().id)
+            {
+                item.SetActive(true);
+            }
+        }
+    }
+
+    public void DisableAllEnemies()
+    {
+        foreach (var item in enemies)
+        {
+            item.SetActive(false);
+        }
     }
 
     private GameObject GetNextRoom(int id)
@@ -298,49 +332,50 @@ public class GameManager : NetworkBehaviour
 
     #region rpcs
 
-    [ServerRpc (RequireOwnership = false)]
-    public void CreateEnemiesServerRpc()
-    {
-        spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
-        foreach (Classes.Room room in mapGenerator.map.rooms)
-        {
-            List<Transform> spawnLocations = GetSpawnLocations(room.room.transform);
-            List<Classes.Enemy> enemies = spawnableEnemies.enemies;
-            List<GameObject> enemiesList = new List<GameObject>();
+    //[ServerRpc (RequireOwnership = false)]
+    //public void CreateEnemiesServerRpc()
+    //{
+    //    spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
+    //    foreach (Classes.Room room in mapGenerator.map.rooms)
+    //    {
+    //        List<Transform> spawnLocations = GetSpawnLocations(room.room.transform);
+    //        List<Classes.Enemy> enemies = spawnableEnemies.enemies;
+    //        List<GameObject> enemiesList = new List<GameObject>();
 
-            foreach (Transform location in spawnLocations)
-            {
-                int randomEnemy = UnityEngine.Random.Range(0, enemies.Count);
-                if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
-                {
-                    GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                    enemy.GetComponent<NetworkObject>().Spawn();
-                    enemy.transform.position = location.position;
-                    enemiesList.Add(enemy);
-                }
-                else
-                {
-                    Transform spawnLocation = location;
-                    GameObject leftLimit = Instantiate(emptyGameObject);
-                    leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                    leftLimit.GetComponent<NetworkObject>().Spawn();
-                    GameObject rightLimit = Instantiate(emptyGameObject);
-                    rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                    rightLimit.GetComponent<NetworkObject>().Spawn();    
-                    GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                    EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
-                    enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
-                    enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
-                    enemyBehaviourPatrolling.enabled = true;
-                    enemy.transform.position = location.position;
-                    enemy.GetComponent<NetworkObject>().Spawn();
-                    enemiesList.Add(enemy);
-                }
-            }
-            this.enemies.Add(enemiesList);
-            DisableEnemiesOnIndex(this.enemies.Count - 1);
-        }
-    }
+    //        foreach (Transform location in spawnLocations)
+    //        {
+    //            int randomEnemy = UnityEngine.Random.Range(0, enemies.Count);
+    //            if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
+    //            {
+    //                GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
+    //                enemy.GetComponent<NetworkObject>().Spawn();
+    //                enemy.transform.position = location.position;
+    //                enemiesList.Add(enemy);
+    //            }
+    //            else
+    //            {
+    //                Transform spawnLocation = location;
+    //                GameObject leftLimit = Instantiate(emptyGameObject);
+    //                leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+    //                leftLimit.GetComponent<NetworkObject>().Spawn();
+    //                GameObject rightLimit = Instantiate(emptyGameObject);
+    //                rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+    //                rightLimit.GetComponent<NetworkObject>().Spawn();    
+    //                GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
+    //                EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
+    //                enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
+    //                enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
+    //                enemyBehaviourPatrolling.enabled = true;
+    //                enemy.transform.position = location.position;
+    //                enemy.GetComponent<NetworkObject>().Spawn();
+    //                enemiesList.Add(enemy);
+    //            }
+    //        }
+    //        this.enemies.Add(enemiesList);
+    //        DisableEnemiesOnIndex(this.enemies.Count - 1);
+    //    }
+    //}
+
 
     [ServerRpc]
     public void TeleportToNextRoomServerRpc(int nextRoomID, int teleportationPointID)
@@ -359,13 +394,12 @@ public class GameManager : NetworkBehaviour
                 GameObject nextRoomTeleportPoint = GetNextRoomTeleportationPoint(nextRoom, teleportationPointID);
                 if(nextRoomTeleportPoint != null)
                 {
-                    int index = GetIndexForEnemies(currentActiveRoom.GetComponent<RoomConnections>().id);
-                    DisableEnemiesOnIndex(index);
                     currentActiveRoom.SetActive(false);
                     nextRoomTeleportPoint.transform.parent.gameObject.SetActive(true);
                     mapVisualization.SetActiveColor(nextRoomTeleportPoint.GetComponentInParent<RoomConnections>().id);
                     currentActiveRoom = nextRoomTeleportPoint.transform.parent.gameObject;
-                    EnableEnemiesOnIndex(GetIndexForEnemies(nextRoomID));
+                    SetEnemiesRoom();
+                    // EnableEnemiesWithRoomID(nextRoomID);
                     foreach (var player in players)
                     {
                         player.transform.position = nextRoomTeleportPoint.transform.position;

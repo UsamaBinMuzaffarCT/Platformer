@@ -43,7 +43,6 @@ public class NetworkObjectPool : MonoBehaviour
     /// <returns></returns>
     public NetworkObject GetNetworkObject(GameObject prefab)
     {
-        Debug.LogError("GetMetworkObject called!");
         return GetNetworkObjectInternal(prefab, Vector3.zero, Quaternion.identity);
     }
 
@@ -122,7 +121,6 @@ public class NetworkObjectPool : MonoBehaviour
     /// <returns></returns>
     private NetworkObject GetNetworkObjectInternal(GameObject prefab, Vector3 position, Quaternion rotation)
     {
-        Debug.LogError("GetMetworkObjectInternal called!");
         var queue = pooledObjects[prefab];
 
         NetworkObject networkObject;

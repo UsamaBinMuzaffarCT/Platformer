@@ -16,7 +16,7 @@ public class TriggerAreaCheck : MonoBehaviour
         if(collision.gameObject.CompareTag("Player") && collision.GetComponent<PlayerMovement>().isDead == false)
         {
             gameObject.SetActive(false);
-            enemyBehaviour.target = collision.transform;
+            enemyBehaviour.target = collision.transform.position;
             enemyBehaviour.inRange = true;
             enemyBehaviour.hotZone.SetActive(true);
         }
