@@ -26,6 +26,7 @@ public class GameManager : NetworkBehaviour
     private GameObject currentActiveRoom;
     private List<List<GameObject>> enemies = new List<List<GameObject>>();
     private float patrollingDistance = 4.5f;
+    private Spawner spawner;
     [SerializeField] private GameObject emptyGameObject;
     [SerializeField] private Canvas playerCanvas;
     [SerializeField] private MapVisualization mapVisualization;
@@ -48,20 +49,10 @@ public class GameManager : NetworkBehaviour
 
     private void Awake()
     {
+        spawner = GameObject.FindGameObjectWithTag("Spawner").GetComponent<Spawner>();
         Instance = this;
         
         Initialize();
-    }
-
-    private void Start()
-    {
-        SpawnEnemy();
-    }
-
-
-    void SpawnEnemy()
-    {
-       
     }
 
     private void Initialize()
@@ -76,7 +67,7 @@ public class GameManager : NetworkBehaviour
         mapGenerator = GameObject.FindWithTag("Map").GetComponent<MapGeneration>();
         mapGenerator.Initialize(NetworkManagement.Instance.n_mapSeed.Value);
         CreateNPCs();
-        //CreateEnemies();
+        CreateEnemies();
         NetworkManagement.Instance.EnableAllPlayers();
         TakePlayersToStartRoom();
     }
@@ -166,40 +157,35 @@ public class GameManager : NetworkBehaviour
                     int randomEnemy = UnityEngine.Random.Range(0, enemies.Count);
                     if (enemies[randomEnemy].enemyType == Enumirators.EnemyType.Stationary)
                     {
-                        GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                        if (NetworkManager.Singleton.IsServer)
-                        {
-                            enemy.GetComponent<NetworkObject>().Spawn();
-                        }
-                        enemy.transform.position = location.position;
-                        enemiesList.Add(enemy);
+                        //GameObject enemy = spawner.SpawnEnemy(enemies[randomEnemy].prefab, enemies[randomEnemy].enemyType, location);
+                        //enemiesList.Add(enemy);
                     }
                     else
                     {
-                        Transform spawnLocation = location;
-                        GameObject leftLimit = Instantiate(emptyGameObject);
-                        leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                        if (NetworkManager.Singleton.IsServer)
-                        {
-                            leftLimit.GetComponent<NetworkObject>().Spawn();
-                        }
-                        GameObject rightLimit = Instantiate(emptyGameObject);
-                        rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-                        if (NetworkManager.Singleton.IsServer)
-                        {
-                            rightLimit.GetComponent<NetworkObject>().Spawn();
-                        }
-                        GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                        EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
-                        enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
-                        enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
-                        enemyBehaviourPatrolling.enabled = true;
-                        enemy.transform.position = location.position;
-                        if (NetworkManager.Singleton.IsServer)
-                        {
-                            enemy.GetComponent<NetworkObject>().Spawn();
-                        }
-                        enemiesList.Add(enemy);
+                        //Transform spawnLocation = location;
+                        //GameObject leftLimit = Instantiate(emptyGameObject);
+                        //leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+                        //if (NetworkManager.Singleton.IsServer)
+                        //{
+                        //    leftLimit.GetComponent<NetworkObject>().Spawn();
+                        //}
+                        //GameObject rightLimit = Instantiate(emptyGameObject);
+                        //rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+                        //if (NetworkManager.Singleton.IsServer)
+                        //{
+                        //    rightLimit.GetComponent<NetworkObject>().Spawn();
+                        //}
+                        //GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
+                        //EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
+                        //enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
+                        //enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
+                        //enemyBehaviourPatrolling.enabled = true;
+                        //enemy.transform.position = location.position;
+                        //if (NetworkManager.Singleton.IsServer)
+                        //{
+                        //    enemy.GetComponent<NetworkObject>().Spawn();
+                        //}
+                        //enemiesList.Add(enemy);
                     }
                 }
                 this.enemies.Add(enemiesList);

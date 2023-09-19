@@ -18,6 +18,8 @@ TagManager:
   - SpawnLocation
   - NPCSpawn
   - NPC
+  - ObjectPool
+  - Spawner
   layers:
   - Default
   - TransparentFX

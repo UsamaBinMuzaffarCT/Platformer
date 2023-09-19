@@ -389,13 +389,14 @@ GameObject:
   - component: {fileID: 2779548941012401112}
   - component: {fileID: 4249292767209020928}
   - component: {fileID: 7499713555184602708}
-  - component: {fileID: 6481201684716651291}
-  - component: {fileID: 6743932880827329147}
-  - component: {fileID: 3639326177584584618}
   - component: {fileID: 2727140276176423372}
   - component: {fileID: 7270432550710323470}
   - component: {fileID: 183547858378354764}
   - component: {fileID: 3116592179218893567}
+  - component: {fileID: 5133374204766293824}
+  - component: {fileID: 1516014052298643633}
+  - component: {fileID: 5308806606628278968}
+  - component: {fileID: 8506292792715690780}
   m_Layer: 0
   m_Name: EnemyStationary 1
   m_TagString: Enemy
@@ -471,53 +472,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6481201684716651291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6462057324539382370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0896a01ec04f844d8edc24634eebf54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackDistance: 2
-  moveSpeed: 2
-  timer: 3
-  inRange: 0
-  target: {fileID: 0}
-  hotZone: {fileID: 1567774479888657265}
-  triggerArea: {fileID: 6469750475289873325}
---- !u!114 &6743932880827329147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6462057324539382370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb05059d09129b44b8af17d24fc2d880, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyBehaviour: {fileID: 0}
-  EnemyBehaviourPatrolling: {fileID: 0}
---- !u!114 &3639326177584584618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6462057324539382370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e511429a3d50d3e4b9dadb13599ea568, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 50
-  hitTimer: 0
 --- !u!114 &2727140276176423372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -615,6 +569,69 @@ MonoBehaviour:
     TriggerNameHash: 1740614436
     TransitionIndex: 2
   m_Animator: {fileID: 7499713555184602708}
+--- !u!114 &5133374204766293824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462057324539382370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb00e9ebfec7e04c9f7445489c93136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size:
+    m_InternalValue: 4
+  m_NumCreates: 3
+  enemyPrefab: {fileID: 0}
+--- !u!114 &1516014052298643633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462057324539382370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0896a01ec04f844d8edc24634eebf54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDistance: 0
+  moveSpeed: 0
+  timer: 0
+  inRange: 0
+  target: {fileID: 0}
+  hotZone: {fileID: 1567774479888657265}
+  triggerArea: {fileID: 6469750475289873325}
+--- !u!114 &5308806606628278968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462057324539382370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e511429a3d50d3e4b9dadb13599ea568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  hitTimer: 0
+--- !u!114 &8506292792715690780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462057324539382370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb05059d09129b44b8af17d24fc2d880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyBehaviour: {fileID: 0}
+  EnemyBehaviourPatrolling: {fileID: 0}
 --- !u!1 &6469750475289873325
 GameObject:
   m_ObjectHideFlags: 0

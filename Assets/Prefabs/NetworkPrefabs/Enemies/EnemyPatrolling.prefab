@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 1271318756723687865}
   - component: {fileID: 2399813603456597583}
   - component: {fileID: -7611586517130039969}
+  - component: {fileID: 6235763363857129311}
   m_Layer: 0
   m_Name: EnemyPatrolling
   m_TagString: Enemy
@@ -335,7 +336,7 @@ MonoBehaviour:
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
+  AutoObjectParentSync: 0
 --- !u!114 &2399813603456597583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,6 +402,22 @@ MonoBehaviour:
     TriggerNameHash: 1740614436
     TransitionIndex: 2
   m_Animator: {fileID: 2933756186976587655}
+--- !u!114 &6235763363857129311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4439967736899209567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb00e9ebfec7e04c9f7445489c93136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size:
+    m_InternalValue: 4
+  m_NumCreates: 3
+  enemyPrefab: {fileID: 0}
 --- !u!1 &5702964392686879631
 GameObject:
   m_ObjectHideFlags: 0

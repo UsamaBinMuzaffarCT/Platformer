@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: -3033894631501767945}
   - component: {fileID: -2236444047131152773}
   - component: {fileID: -8248474707889126172}
+  - component: {fileID: 7440609210338884940}
   m_Layer: 0
   m_Name: SkeletonSwordStationary
   m_TagString: Enemy
@@ -437,7 +438,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -536,7 +537,7 @@ MonoBehaviour:
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
+  AutoObjectParentSync: 0
 --- !u!114 &-2236444047131152773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,6 +603,22 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &7440609210338884940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5673583327137001164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb00e9ebfec7e04c9f7445489c93136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size:
+    m_InternalValue: 4
+  m_NumCreates: 3
+  enemyPrefab: {fileID: 0}
 --- !u!1 &8735072735783477992
 GameObject:
   m_ObjectHideFlags: 0

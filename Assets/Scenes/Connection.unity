@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 472748414}
   m_Layer: 0
   m_Name: Spawner
-  m_TagString: Untagged
+  m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -401,9 +401,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7634e0bf81ad84b46bb12eb67629d4c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ObjectPool: {fileID: 0}
+  m_ObjectPool: {fileID: 1917153224}
   m_Amount: 4
   m_Enemy: {fileID: 6462057324539382370, guid: 8158959557c579a4399fe776ef334132, type: 3}
+  spawnableEnemies: {fileID: 0}
 --- !u!1 &481800973
 GameObject:
   m_ObjectHideFlags: 0
@@ -1264,7 +1265,7 @@ GameObject:
   - component: {fileID: 1917153224}
   m_Layer: 0
   m_Name: NetworkObjectPool
-  m_TagString: Untagged
+  m_TagString: ObjectPool
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1285,6 +1286,14 @@ MonoBehaviour:
   PooledPrefabsList:
   - Prefab: {fileID: 6462057324539382370, guid: 8158959557c579a4399fe776ef334132, type: 3}
     PrewarmCount: 10
+  - Prefab: {fileID: 4439967736899209567, guid: 85abc33480646bd4b87bd93770f90639, type: 3}
+    PrewarmCount: 10
+  - Prefab: {fileID: 7868395994594600466, guid: ee57cadf8d79f5e408d385afa28dfd8a, type: 3}
+    PrewarmCount: 10
+  - Prefab: {fileID: 5673583327137001164, guid: 1d9e72046b468a64cbef5fd37309a29a, type: 3}
+    PrewarmCount: 10
+  - Prefab: {fileID: 7408878460169672758, guid: 7b391a3f51f691f46aa5ec1993cc3cf9, type: 3}
+    PrewarmCount: 20
 --- !u!4 &1917153225
 Transform:
   m_ObjectHideFlags: 0
