@@ -45,12 +45,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 004d9e3bc3fe48647b1b02104101ec23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  n_teleportationTouchCount:
+    m_InternalValue: 0
+  startRoom: {fileID: 0}
   teleportationTimer: 0
+  emptyGameObject: {fileID: 7408878460169672758, guid: 7b391a3f51f691f46aa5ec1993cc3cf9, type: 3}
+  playerCanvas: {fileID: 0}
   mapVisualization: {fileID: 0}
   prefabsNPCs:
   - {fileID: 4276977853702562011, guid: 63be94f7d03b3e6449d039ab098efe46, type: 3}
   - {fileID: 6377380105120137153, guid: 0b85397187ff9244193496d01b3d41f7, type: 3}
   - {fileID: 5507665885785991152, guid: 91b10d4e5ed6d4546847e54fab462dab, type: 3}
+  spawnableEnemies: {fileID: 11400000, guid: b76f501e1ea7d4345afc1866bb28fec7, type: 2}
 --- !u!114 &5489074880773790804
 MonoBehaviour:
   m_ObjectHideFlags: 0

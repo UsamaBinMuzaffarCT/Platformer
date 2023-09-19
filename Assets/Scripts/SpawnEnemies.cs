@@ -34,27 +34,24 @@ public class SpawnEnemies : MonoBehaviour
             {
                 GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
                 enemy.GetComponent<NetworkObject>().Spawn();
-                enemy.transform.SetParent(transform);
-                enemy.transform.position = location.position;
+                enemy.transform.position = location.position; //
             }
             else
             {
                 Transform spawnLocation = location;
                 GameObject leftLimit = Instantiate(emptyGameObject);
-                leftLimit.transform.SetParent(transform);
                 leftLimit.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+                leftLimit.GetComponent<NetworkObject>().Spawn();
                 GameObject rightLimit = Instantiate(emptyGameObject);
-                rightLimit.transform.SetParent(transform);
                 rightLimit.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
+                leftLimit.GetComponent<NetworkObject>().Spawn();
                 GameObject enemy = Instantiate(enemies[randomEnemy].prefab);
-                enemy.GetComponent<NetworkObject>().Spawn();
-                enemy.transform.SetParent(transform);
                 EnemyBehaviourPatrolling enemyBehaviourPatrolling = enemy.GetComponent<EnemyBehaviourPatrolling>();
                 enemyBehaviourPatrolling.leftLimit = leftLimit.transform;
                 enemyBehaviourPatrolling.rightLimit = rightLimit.transform;
                 enemyBehaviourPatrolling.enabled = true;
-                enemy.transform.position = location.position;
-            
+                enemy.transform.position = location.position; //
+                enemy.GetComponent<NetworkObject>().Spawn();
             }
         }
     }
