@@ -1,9 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : NetworkBehaviour {
 
 	public float speed = 20f;
 	public int damage = 40;
@@ -14,10 +15,11 @@ public class Bullet : MonoBehaviour {
 
     private void Awake()
     {
-		player = GameObject.FindGameObjectWithTag("Player");
+		List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();
+
+        player = players.Find(x=>x.GetComponent<PlayerMovement>().IsOwner);
     }
 
-    // Use this for initialization
     void Start () {
 		rb.velocity = (player.transform.localScale.x/math.abs(player.transform.localScale.x)) * transform.right * speed;
 	}

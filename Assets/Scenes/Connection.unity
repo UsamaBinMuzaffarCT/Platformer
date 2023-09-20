@@ -1292,7 +1292,9 @@ MonoBehaviour:
     PrewarmCount: 10
   - Prefab: {fileID: 5673583327137001164, guid: 1d9e72046b468a64cbef5fd37309a29a, type: 3}
     PrewarmCount: 10
-  - Prefab: {fileID: 7408878460169672758, guid: 7b391a3f51f691f46aa5ec1993cc3cf9, type: 3}
+  - Prefab: {fileID: 285050194597139227, guid: da767121380542c4c957344a69c67876, type: 3}
+    PrewarmCount: 20
+  - Prefab: {fileID: 1539632861300792, guid: c73fa1c0cc51b3c478df975c511436ec, type: 3}
     PrewarmCount: 20
 --- !u!4 &1917153225
 Transform:
