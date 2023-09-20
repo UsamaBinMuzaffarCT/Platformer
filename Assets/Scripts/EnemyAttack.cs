@@ -8,7 +8,6 @@ public class EnemyAttack : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Hit Player");
             if (transform.position.x >= collision.transform.position.x)
             {
                 collision.GetComponent<PlayerMovement>().knockBackFromRight = true;

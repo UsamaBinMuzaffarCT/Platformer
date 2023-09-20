@@ -116,7 +116,6 @@ public class EnemyBehaviour : NetworkBehaviour
         }
         else
         {
-            Debug.Log("Twist");
             rotation.y = 0;
         }
 

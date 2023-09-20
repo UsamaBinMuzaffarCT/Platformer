@@ -22,10 +22,8 @@ public class Spawner : MonoBehaviour
         spawnableEnemies = Resources.Load<EnemiesScriptable>("ScriptableObjects/EnemiesScriptable");
         if (!NetworkManager.Singleton.IsServer)
         {
-            Debug.Log("Not Server");
             return;
         }
-        // Invoke("SpawnEnemy", 2f);
     }
 
     public GameObject SpawnEnemy(GameObject prefab, Enumirators.EnemyType enemyType, Transform location, int roomID)

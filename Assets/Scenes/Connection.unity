@@ -402,8 +402,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ObjectPool: {fileID: 1917153224}
-  m_Amount: 4
-  m_Enemy: {fileID: 6462057324539382370, guid: 8158959557c579a4399fe776ef334132, type: 3}
+  patrollingDistance: 4.5
+  emptyPrefab: {fileID: 0}
   spawnableEnemies: {fileID: 0}
 --- !u!1 &481800973
 GameObject:
