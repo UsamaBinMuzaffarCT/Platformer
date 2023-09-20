@@ -7,6 +7,10 @@ public class RescueQuest : BaseQuest
 {
     public override void CreateQuest()
     {
+        if (GameManager.Instance.n_questActiveStatus.Value != false)
+        {
+            return;
+        }
         bool questAccepted = DialogueLua.GetVariable("RescueQuestAccepted").asBool;
         if (questAccepted && gameManager.nPCQuests.Find(x => x.questType == Enumirators.QuestType.Rescue).count < 1)
         {
@@ -20,7 +24,6 @@ public class RescueQuest : BaseQuest
                 {
                     if (count == pickRandom)
                     {
-                        mapVisualization.SetQuestColor(childRoomConnections.id, Color.magenta);
                         questRoomID = childRoomConnections.id;
                         questType = Enumirators.QuestType.Rescue;
                         questRoom = child.gameObject;
@@ -31,6 +34,8 @@ public class RescueQuest : BaseQuest
                                 nPCQuest.count = 1;
                             }
                         }
+                        gameManager.SetQuestServerRpc(questType, questRoomID);
+                        gameManager.DestroyQuestNPCServerRpc(questType);
                     }
                 }
                 count++;

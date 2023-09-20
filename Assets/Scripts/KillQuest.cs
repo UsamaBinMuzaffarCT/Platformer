@@ -7,7 +7,10 @@ public class KillQuest : BaseQuest
 { 
     public override void CreateQuest()
     {
-        
+        if (GameManager.Instance.n_questActiveStatus.Value != false)
+        {
+            return;
+        }
         bool questAccepted = DialogueLua.GetVariable("QuestAccepted").asBool;
         if (questAccepted && gameManager.nPCQuests.Find(x => x.questType == Enumirators.QuestType.Kill).count < 1)
         {
@@ -21,7 +24,6 @@ public class KillQuest : BaseQuest
                 {
                     if (count == pickRandom)
                     {
-                        mapVisualization.SetQuestColor(childRoomConnections.id, Color.grey);
                         questRoomID = childRoomConnections.id;
                         questType = Enumirators.QuestType.Kill;
                         questRoom = child.gameObject;
@@ -32,6 +34,8 @@ public class KillQuest : BaseQuest
                                 nPCQuest.count = 1;
                             }
                         }
+                        gameManager.SetQuestServerRpc(questType, questRoomID);
+                        gameManager.DestroyQuestNPCServerRpc(questType);
                     }
                 }
                 count++;

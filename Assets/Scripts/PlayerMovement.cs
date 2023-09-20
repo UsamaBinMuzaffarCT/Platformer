@@ -685,13 +685,13 @@ public class PlayerMovement : NetworkBehaviour
     [ClientRpc]
     private void CreateBulletClientRpc(int direction, Vector3 location)
     {
-        GameObject fireballGameObject = Instantiate(bullet);
-        fireballGameObject.transform.position = location;
-        Rigidbody2D fireballGameObjectRb = fireballGameObject.GetComponent<Rigidbody2D>();
-        fireballGameObjectRb.velocity = (direction * fireballGameObject.transform.right * speed);
-        Vector3 localScale = fireballGameObject.transform.localScale;
+        GameObject bulletGameObject = Instantiate(bullet);
+        bulletGameObject.transform.position = location;
+        Rigidbody2D bulletGameObjectRb = bulletGameObject.GetComponent<Rigidbody2D>();
+        bulletGameObjectRb.velocity = (direction * bulletGameObject.transform.right * bulletGameObject.GetComponent<Bullet>().speed);
+        Vector3 localScale = bulletGameObject.transform.localScale;
         localScale.x *= direction;
-        fireballGameObject.transform.localScale = localScale;
+        bulletGameObject.transform.localScale = localScale;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -706,7 +706,7 @@ public class PlayerMovement : NetworkBehaviour
         GameObject fireballGameObject = Instantiate(fireball);
         fireballGameObject.transform.position = location;
         Rigidbody2D fireballGameObjectRb = fireballGameObject.GetComponent<Rigidbody2D>();
-        fireballGameObjectRb.velocity = (direction * fireballGameObject.transform.right * speed);
+        fireballGameObjectRb.velocity = (direction * fireballGameObject.transform.right * fireballGameObject.GetComponent<Fireball>().speed);
         Vector3 localScale = fireballGameObject.transform.localScale;
         localScale.x *= direction;
         fireballGameObject.transform.localScale = localScale;

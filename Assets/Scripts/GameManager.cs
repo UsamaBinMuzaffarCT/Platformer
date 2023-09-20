@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
-using static Classes;
+using UnityEngine.PlayerLoop;
 
 public class GameManager : NetworkBehaviour
 {
@@ -14,8 +15,10 @@ public class GameManager : NetworkBehaviour
     #region network-variables
 
     public NetworkVariable<int> n_teleportationTouchCount = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
-    public GameObject startRoom;
-    public float teleportationTimer;
+    public NetworkVariable<int> n_completedQuests = new NetworkVariable<int>(0, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> n_currentQuestRoomID = new NetworkVariable<int>(-3, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<Enumirators.QuestType> n_currentQuest = new NetworkVariable<Enumirators.QuestType>(Enumirators.QuestType.Rescue, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> n_questActiveStatus = new NetworkVariable<bool>(false, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
 
     #endregion
 
@@ -25,8 +28,6 @@ public class GameManager : NetworkBehaviour
     private GameObject player;
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
-    public List<GameObject> enemies = new List<GameObject>();
-    private float patrollingDistance = 4.5f;
     private Spawner spawner;
     [SerializeField] private GameObject emptyGameObject;
     [SerializeField] private Canvas playerCanvas;
@@ -41,6 +42,9 @@ public class GameManager : NetworkBehaviour
     #region public-variable
 
     public List<Classes.NPCQuest> nPCQuests = new List<Classes.NPCQuest>();
+    public List<GameObject> enemies = new List<GameObject>();
+    public GameObject startRoom;
+    public float teleportationTimer;
 
     #endregion
 
@@ -74,6 +78,11 @@ public class GameManager : NetworkBehaviour
         GetEnemyObject();
         NetworkManagement.Instance.EnableAllPlayers();
         TakePlayersToStartRoom();
+        if (NetworkManager.Singleton.IsServer)
+        {
+            n_currentQuestRoomID.Value = -3;
+            n_questActiveStatus.Value = false;
+        }
     }
 
     private void Update()
@@ -327,7 +336,10 @@ public class GameManager : NetworkBehaviour
                     teleportationTimer = 3f;
                 }
             }
-            
+            if (currentActiveRoom.GetComponent<RoomConnections>().id == n_currentQuestRoomID.Value && n_questActiveStatus.Value)
+            {
+                DisableQuestServerRpc();
+            }
         }
     }
 
@@ -348,12 +360,77 @@ public class GameManager : NetworkBehaviour
     public void DeccrementTeleoprtationTouchCountServerRpc()
     {
         n_teleportationTouchCount.Value -= 1;
+        if(n_teleportationTouchCount.Value < 0)
+        {
+            n_teleportationTouchCount.Value = 0;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void ResetTeleoprtationTouchCountServerRpc()
     {
         n_teleportationTouchCount.Value = 0;
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+
+    public void SetQuestServerRpc(Enumirators.QuestType questType, int questRoomID)
+    {
+        n_questActiveStatus.Value = true;
+        n_currentQuest.Value = questType;
+        n_currentQuestRoomID.Value = questRoomID;
+        SetQuestClientRpc(questType, questRoomID);
+    }
+
+    [ClientRpc]
+    public void SetQuestClientRpc(Enumirators.QuestType questType, int questRoomID) 
+    { 
+        if(questType == Enumirators.QuestType.Fetch)
+        {
+            mapVisualization.SetQuestColor(questRoomID, Color.cyan);
+        }
+        else if (questType == Enumirators.QuestType.Kill)
+        {
+            mapVisualization.SetQuestColor(questRoomID, Color.grey);
+        }
+        else if (questType == Enumirators.QuestType.Rescue)
+        {
+            mapVisualization.SetQuestColor(questRoomID, Color.magenta);
+        }
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    public void DestroyQuestNPCServerRpc(Enumirators.QuestType questType)
+    {
+        DestroyQuestNPCClientRpc(questType);
+    }
+
+    [ClientRpc]
+    public void DestroyQuestNPCClientRpc(Enumirators.QuestType questType)
+    {
+        if (n_questActiveStatus.Value == true)
+        {
+            if (questType == Enumirators.QuestType.Fetch)
+            {
+                Destroy(FindAnyObjectByType<FetchQuest>().gameObject);
+            }
+            else if (questType == Enumirators.QuestType.Kill)
+            {
+                Destroy(FindAnyObjectByType<KillQuest>().gameObject);
+            }
+            else if (questType == Enumirators.QuestType.Rescue)
+            {
+                Destroy(FindAnyObjectByType<RescueQuest>().gameObject);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DisableQuestServerRpc()
+    {
+        n_questActiveStatus.Value = false;
+        n_completedQuests.Value += 1;
+        Debug.Log("Quests Completed : " + n_completedQuests.Value);
     }
 
     #endregion

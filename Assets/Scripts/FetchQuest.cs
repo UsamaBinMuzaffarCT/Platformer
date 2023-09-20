@@ -5,6 +5,10 @@ public class FetchQuest : BaseQuest
 {
     public override void CreateQuest()
     {
+        if (GameManager.Instance.n_questActiveStatus.Value != false)
+        {
+            return;
+        }
         bool questAccepted = DialogueLua.GetVariable("FetchQuestAccepted").asBool;
         if (questAccepted && gameManager.nPCQuests.Find(x => x.questType == Enumirators.QuestType.Fetch).count < 1)
         {
@@ -18,7 +22,6 @@ public class FetchQuest : BaseQuest
                 {
                     if (count == pickRandom)
                     {
-                        mapVisualization.SetQuestColor(childRoomConnections.id, Color.cyan);
                         questRoomID = childRoomConnections.id;
                         questType = Enumirators.QuestType.Fetch;
                         questRoom = child.gameObject;
@@ -29,11 +32,12 @@ public class FetchQuest : BaseQuest
                                 nPCQuest.count = 1;
                             }
                         }
+                        gameManager.SetQuestServerRpc(questType, questRoomID);
+                        gameManager.DestroyQuestNPCServerRpc(questType);
                     }
                 }
                 count++;
             }
         }
-        
     }
 }
