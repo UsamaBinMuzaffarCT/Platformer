@@ -34,25 +34,12 @@ public class Spawner : MonoBehaviour
         go.transform.position = location.position;
         go.GetComponent<Enemy>().roomID.Value = roomID;
         go.GetComponent<NetworkObject>().Spawn(true);
-        return go;
-        if (enemyType == Enumirators.EnemyType.Stationary)
+        if (enemyType == Enumirators.EnemyType.Patrolling)
         {
-            
+            EnemyBehaviourPatrolling enemyBehaviourPatrolling = go.GetComponent<EnemyBehaviourPatrolling>();
+            enemyBehaviourPatrolling.leftLimit.Value = new Vector3(location.transform.position.x - patrollingDistance, location.transform.position.y, location.transform.position.z);
+            enemyBehaviourPatrolling.rightLimit.Value = new Vector3(location.transform.position.x + patrollingDistance, location.transform.position.y, location.transform.position.z);
         }
-        //else
-        //{
-        //    Transform spawnLocation = location;
-        //    GameObject left = m_ObjectPool.GetNetworkObject(emptyPrefab).gameObject;
-        //    left.transform.position = new Vector3(spawnLocation.transform.position.x - patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-        //    GameObject right = m_ObjectPool.GetNetworkObject(emptyPrefab).gameObject;
-        //    right.transform.position = new Vector3(spawnLocation.transform.position.x + patrollingDistance, spawnLocation.transform.position.y, spawnLocation.transform.position.z);
-        //    GameObject go = m_ObjectPool.GetNetworkObject(prefab).gameObject;
-        //    go.transform.position = location.position;
-        //    go.GetComponent<Enemy>().roomID.Value = roomID;
-        //    EnemyBehaviourPatrolling enemyBehaviourPatrolling = go.GetComponent<EnemyBehaviourPatrolling>();
-        //    enemyBehaviourPatrolling.leftLimit.Value = left.transform.position;
-        //    enemyBehaviourPatrolling.rightLimit.Value = right.transform.position;
-        //    return go;
-        //}
+        return go;
     }
 }
