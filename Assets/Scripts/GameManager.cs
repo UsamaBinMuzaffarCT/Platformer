@@ -157,7 +157,6 @@ public class GameManager : NetworkBehaviour
             {
                 List<Transform> spawnLocations = GetSpawnLocations(room.room.transform);
                 List<Classes.Enemy> enemies = spawnableEnemies.enemies;
-                //List<GameObject> enemiesList = new List<GameObject>();
 
                 foreach (Transform location in spawnLocations)
                 {
@@ -315,12 +314,12 @@ public class GameManager : NetworkBehaviour
                 GameObject nextRoomTeleportPoint = GetNextRoomTeleportationPoint(nextRoom, teleportationPointID);
                 if(nextRoomTeleportPoint != null)
                 {
+                    ResetTeleoprtationTouchCountServerRpc();
                     currentActiveRoom.SetActive(false);
                     nextRoomTeleportPoint.transform.parent.gameObject.SetActive(true);
                     mapVisualization.SetActiveColor(nextRoomTeleportPoint.GetComponentInParent<RoomConnections>().id);
                     currentActiveRoom = nextRoomTeleportPoint.transform.parent.gameObject;
                     SetEnemiesRoom();
-                    // EnableEnemiesWithRoomID(nextRoomID);
                     foreach (var player in players)
                     {
                         player.transform.position = nextRoomTeleportPoint.transform.position;

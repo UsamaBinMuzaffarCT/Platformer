@@ -6,7 +6,7 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     [SerializeField]
-    NetworkObjectPool m_ObjectPool;
+    NetworkObjectPool objectPool;
 
     [SerializeField]
     private float patrollingDistance = 4.5f;
@@ -28,7 +28,7 @@ public class Spawner : MonoBehaviour
 
     public GameObject SpawnEnemy(GameObject prefab, Enumirators.EnemyType enemyType, Transform location, int roomID)
     {
-        GameObject go = m_ObjectPool.GetNetworkObject(prefab).gameObject;
+        GameObject go = objectPool.GetNetworkObject(prefab).gameObject;
         go.transform.position = location.position;
         go.GetComponent<Enemy>().roomID.Value = roomID;
         go.GetComponent<NetworkObject>().Spawn(true);

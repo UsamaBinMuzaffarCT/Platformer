@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Fireball : NetworkBehaviour
 {
-    public float speed = 20f;
+    public float speed = 8f;
     public int damage = 40;
     public Rigidbody2D rb;
     public bool fizzleOut = false;
@@ -36,7 +36,7 @@ public class Fireball : NetworkBehaviour
 
     public void DestroyFireball()
     {
-        DestroyFireballServerRpc();
+        Destroy(gameObject);
     }
 
     [ServerRpc(RequireOwnership = false)]

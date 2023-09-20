@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class EnemyHealth : NetworkBehaviour
 {
-
     public int health;
 
     private NetworkVariable<int> n_health = new NetworkVariable<int>(0, writePerm:NetworkVariableWritePermission.Owner);
@@ -41,11 +40,17 @@ public class EnemyHealth : NetworkBehaviour
         {
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
             {
-                n_health.Value -= damage;
+                TakeDamagerServerRpc(damage);
                 animator.SetTrigger("Hurt");
                 hitTimer = 0.5f;
             }
         }
         
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void TakeDamagerServerRpc(int damage)
+    {
+        n_health.Value -= damage;
     }
 }

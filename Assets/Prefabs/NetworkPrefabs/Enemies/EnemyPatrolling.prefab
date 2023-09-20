@@ -284,9 +284,11 @@ MonoBehaviour:
   moveSpeed: 2
   timer: 3
   inRange: 0
-  target: {fileID: 0}
-  leftLimit: {fileID: 0}
-  rightLimit: {fileID: 0}
+  target: {x: 0, y: 0, z: 0}
+  leftLimit:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  rightLimit:
+    m_InternalValue: {x: 0, y: 0, z: 0}
   hotZone: {fileID: 1551628125010407617}
   triggerArea: {fileID: 5702964392686879631}
 --- !u!114 &7806432016437109882
@@ -353,7 +355,7 @@ MonoBehaviour:
   SyncPositionY: 1
   SyncPositionZ: 0
   SyncRotAngleX: 0
-  SyncRotAngleY: 0
+  SyncRotAngleY: 1
   SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
@@ -414,10 +416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eb00e9ebfec7e04c9f7445489c93136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size:
-    m_InternalValue: 4
-  m_NumCreates: 3
-  enemyPrefab: {fileID: 0}
+  roomID:
+    m_InternalValue: -3
 --- !u!1 &5702964392686879631
 GameObject:
   m_ObjectHideFlags: 0

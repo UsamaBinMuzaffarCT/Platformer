@@ -434,6 +434,8 @@ MonoBehaviour:
     m_InternalValue: 0
   n_faction:
     m_InternalValue: 1
+  n_teleportSet:
+    m_InternalValue: 0
   faction: 1
   rb: {fileID: 6981507186029202917}
   groundCheck: {fileID: 5323746231306651456}
@@ -456,7 +458,7 @@ MonoBehaviour:
   knockBackForce: 5
   jumpButton: {fileID: 0}
   bullet: {fileID: 1539632861300792, guid: c73fa1c0cc51b3c478df975c511436ec, type: 3}
-  fireball: {fileID: 3718445200140177192, guid: da767121380542c4c957344a69c67876, type: 3}
+  fireball: {fileID: 285050194597139227, guid: da767121380542c4c957344a69c67876, type: 3}
   gunBarrel: {fileID: 2020660249211064474}
   playerCamera: {fileID: 0}
   horizontal: 0
@@ -679,7 +681,7 @@ MonoBehaviour:
   SyncScaleZ: 0
   PositionThreshold: 0.00000001
   RotAngleThreshold: 0.01
-  ScaleThreshold: 0.00000001
+  ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0

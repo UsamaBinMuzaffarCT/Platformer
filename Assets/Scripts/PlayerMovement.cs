@@ -68,6 +68,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private GameObject playerCamera;
 
     private bool otherInput = true;
+    private NetworkObjectPool objectPool;
 
     [SerializeField] private float horizontal;
     private float speed = 8f;
@@ -230,6 +231,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        objectPool = FindAnyObjectByType<NetworkObjectPool>();
         DontDestroyOnLoad(this);
         n_isDead.Value = false;
         //SetFactionAnimator();
@@ -327,12 +329,13 @@ public class PlayerMovement : NetworkBehaviour
                 Invoke(nameof(StopAttack), 0.1f);
                 if (faction == Enumirators.Faction.Gunman)
                 {
-                    GameObject instantiatedBullet = Instantiate(bullet);
-                    instantiatedBullet.transform.position = gunBarrel.transform.position;
+                    int direction = (int)(transform.localScale.x / math.abs(transform.localScale.x));
+                    CreateBulletServerRpc(direction, gunBarrel.transform.position);
                 }
                 if (faction == Enumirators.Faction.Mage)
                 {
-                    CreateFireballServerRpc((int)(transform.localScale.x / math.abs(transform.localScale.x)), gunBarrel.transform.position.x, gunBarrel.transform.position.y, gunBarrel.transform.position.z);
+                    int direction = (int)(transform.localScale.x / math.abs(transform.localScale.x));
+                    CreateFireballServerRpc(direction, gunBarrel.transform.position);
                 }
             }
         }
@@ -674,39 +677,39 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void CreateFireballServerRpc(int direction, float x, float y, float z)
+    private void CreateBulletServerRpc(int direction, Vector3 location)
     {
-        if (!IsServer)
-        {
-            CreateFireballClientRpc(direction, x, y, z);
-        }
-        else
-        {
-            instantiatedBullet = Instantiate(fireball);
-            instantiatedBullet.transform.position = new Vector3(x, y, z);
-            Rigidbody2D instantiatedRb = instantiatedBullet.GetComponent<Rigidbody2D>();
-            instantiatedRb.velocity = (direction * instantiatedBullet.transform.right * speed);
-            Vector3 localScale = instantiatedBullet.transform.localScale;
-            localScale.x *= direction;
-            instantiatedBullet.transform.localScale = localScale;
-            instantiatedBullet.GetComponent<NetworkObject>().Spawn(true);
-        }
+        CreateBulletClientRpc(direction, location);
     }
 
     [ClientRpc]
-    private void CreateFireballClientRpc(int direction, float x, float y, float z)
+    private void CreateBulletClientRpc(int direction, Vector3 location)
     {
-        if (!IsOwner)
-        {
-            instantiatedBullet = Instantiate(fireball);
-            instantiatedBullet.transform.position = new Vector3(x, y, z);
-            Rigidbody2D instantiatedRb = instantiatedBullet.GetComponent<Rigidbody2D>();
-            instantiatedRb.velocity = (direction * instantiatedBullet.transform.right * speed);
-            Vector3 localScale = instantiatedBullet.transform.localScale;
-            localScale.x *= direction;
-            instantiatedBullet.transform.localScale = localScale;
-            instantiatedBullet.GetComponent<NetworkObject>().Spawn(true);
-        }
+        GameObject fireballGameObject = Instantiate(bullet);
+        fireballGameObject.transform.position = location;
+        Rigidbody2D fireballGameObjectRb = fireballGameObject.GetComponent<Rigidbody2D>();
+        fireballGameObjectRb.velocity = (direction * fireballGameObject.transform.right * speed);
+        Vector3 localScale = fireballGameObject.transform.localScale;
+        localScale.x *= direction;
+        fireballGameObject.transform.localScale = localScale;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CreateFireballServerRpc(int direction, Vector3 location)
+    {
+        CreateFireballClientRpc(direction, location);
+    }
+
+    [ClientRpc]
+    private void CreateFireballClientRpc(int direction, Vector3 location)
+    {
+        GameObject fireballGameObject = Instantiate(fireball);
+        fireballGameObject.transform.position = location;
+        Rigidbody2D fireballGameObjectRb = fireballGameObject.GetComponent<Rigidbody2D>();
+        fireballGameObjectRb.velocity = (direction * fireballGameObject.transform.right * speed);
+        Vector3 localScale = fireballGameObject.transform.localScale;
+        localScale.x *= direction;
+        fireballGameObject.transform.localScale = localScale;
     }
 
     //private void JoystickHorizontal()

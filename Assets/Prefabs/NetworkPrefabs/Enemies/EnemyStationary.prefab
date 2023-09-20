@@ -554,7 +554,7 @@ MonoBehaviour:
   SyncPositionY: 1
   SyncPositionZ: 0
   SyncRotAngleX: 0
-  SyncRotAngleY: 0
+  SyncRotAngleY: 1
   SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
@@ -615,10 +615,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eb00e9ebfec7e04c9f7445489c93136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size:
-    m_InternalValue: 4
-  m_NumCreates: 3
-  enemyPrefab: {fileID: 0}
+  roomID:
+    m_InternalValue: -3
 --- !u!1 &6469750475289873325
 GameObject:
   m_ObjectHideFlags: 0

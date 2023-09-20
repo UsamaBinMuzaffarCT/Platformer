@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7634e0bf81ad84b46bb12eb67629d4c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ObjectPool: {fileID: 1917153224}
+  objectPool: {fileID: 1917153224}
   patrollingDistance: 4.5
   emptyPrefab: {fileID: 0}
   spawnableEnemies: {fileID: 0}
