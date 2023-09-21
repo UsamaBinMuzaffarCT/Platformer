@@ -63,7 +63,7 @@ public class GameManager : NetworkBehaviour
     }
 
     private void Initialize()
-    {
+        {
         Enumirators.QuestType[] values = (Enumirators.QuestType[])Enum.GetValues(typeof(Enumirators.QuestType));
         for (int i = 0; i < Enum.GetValues(typeof(Enumirators.QuestType)).Length; i++)
         {

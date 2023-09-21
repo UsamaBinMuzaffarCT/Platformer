@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using static Classes;
 
-public class MapVisualization : MonoBehaviour
+public class MapVisualization : NetworkBehaviour
 { 
     private List<GameObject> nodes = new List<GameObject>();
     [SerializeField] private Transform startTransform;
@@ -13,8 +14,9 @@ public class MapVisualization : MonoBehaviour
     [SerializeField] private LineRendererController controller;
     [SerializeField] private MapGeneration mapGenerator;
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
+        Random.InitState(NetworkManagement.Instance.n_mapSeed.Value);
         PopulateMapNodes();
         ConnectNodes();
         transform.parent.gameObject.SetActive(false);
