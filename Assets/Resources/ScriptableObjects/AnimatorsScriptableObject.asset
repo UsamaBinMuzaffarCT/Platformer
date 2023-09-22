@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   factionAnimators:
   - faction: 0
-    controller: {fileID: 9100000, guid: 15a412ccc9d494adba7e01c88607f05f, type: 2}
+    controller: {fileID: 9100000, guid: acfd456d40ee01a4099dd13f5a661baa, type: 2}
   - faction: 1
     controller: {fileID: 9100000, guid: 45c596d4dcb2742089af3f717fab7de4, type: 2}
   - faction: 2
