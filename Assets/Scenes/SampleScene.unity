@@ -995,7 +995,7 @@ GameObject:
   - component: {fileID: 205175442}
   - component: {fileID: 205175444}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: Btn-Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1517,7 +1517,7 @@ GameObject:
   - component: {fileID: 516689914}
   - component: {fileID: 516689915}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Btn-Jump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1602,7 +1602,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516689908}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -2841,7 +2841,7 @@ GameObject:
   - component: {fileID: 786270580}
   - component: {fileID: 786270582}
   m_Layer: 5
-  m_Name: Button (4)
+  m_Name: Btn-Interact
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5642,7 +5642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1258253673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5718,8 +5718,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2067808329}
   - {fileID: 1153513463}
+  - {fileID: 2067808329}
   - {fileID: 1161476916}
   - {fileID: 760809489}
   m_Father: {fileID: 0}
@@ -8370,8 +8370,9 @@ GameObject:
   - component: {fileID: 2034739892}
   - component: {fileID: 2034739891}
   - component: {fileID: 2034739893}
+  - component: {fileID: 2034739894}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Btn-Dash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8492,6 +8493,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2034739894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034739887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
 --- !u!1 &2036211797
 GameObject:
   m_ObjectHideFlags: 0
@@ -8582,7 +8596,7 @@ GameObject:
   - component: {fileID: 2056596742}
   - component: {fileID: 2056596744}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: Btn-Attack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8714,6 +8728,7 @@ GameObject:
   - component: {fileID: 2067808329}
   - component: {fileID: 2067808331}
   - component: {fileID: 2067808330}
+  - component: {fileID: 2067808332}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -8784,6 +8799,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067808328}
   m_CullTransparentMesh: 1
+--- !u!114 &2067808332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2067808328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07c570537d1ed14f9e13ecdbb57e0f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  map: {fileID: 205175444}
+  jump: {fileID: 516689915}
+  dash: {fileID: 2034739894}
+  attack: {fileID: 2056596744}
+  interact: {fileID: 786270582}
 --- !u!1 &2072949744
 GameObject:
   m_ObjectHideFlags: 0

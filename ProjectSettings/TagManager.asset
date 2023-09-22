@@ -31,9 +31,9 @@ TagManager:
   - Wall
   - Player
   - IgnoreCollision
-  - 
-  - 
-  - 
+  - Enemy
+  - NPCs
+  - Projectile
   - 
   - 
   - 

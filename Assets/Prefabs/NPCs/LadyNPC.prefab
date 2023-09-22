@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4255819502285111713}
   - component: {fileID: 2718197994694319473}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sprites
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6825132508479812616}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2718197994694319473
 SpriteRenderer:
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 1206076113228272459}
   - component: {fileID: 8451380026780061360}
   - component: {fileID: 2810851042251163398}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: LadyNPC
   m_TagString: NPC
   m_Icon: {fileID: 0}
@@ -154,25 +154,6 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0

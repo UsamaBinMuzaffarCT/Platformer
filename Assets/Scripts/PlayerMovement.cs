@@ -57,7 +57,7 @@ public class PlayerMovement : NetworkBehaviour
 
     #region private-variables
 
-    //[SerializeField] private Joystick joystick;
+    [SerializeField] private Joystick joystick;
 
     private BaseAnimationControls animationControls;
     [SerializeField] private GameObject bullet;
@@ -68,7 +68,6 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private GameObject playerCamera;
 
     private bool otherInput = true;
-    private NetworkObjectPool objectPool;
 
     [SerializeField] private float horizontal;
     private float speed = 8f;
@@ -230,11 +229,28 @@ public class PlayerMovement : NetworkBehaviour
 
 
     public override void OnNetworkSpawn()
-    {
-        objectPool = FindAnyObjectByType<NetworkObjectPool>();
+    {   
         DontDestroyOnLoad(this);
         n_isDead.Value = false;
         //SetFactionAnimator();
+    }
+
+    public void SetControls()
+    {
+        joystick = FindAnyObjectByType<Joystick>();
+        if (SystemInfo.deviceType != DeviceType.Handheld)
+        {
+            joystick.transform.parent.gameObject.SetActive(false);
+        }
+    }
+
+    public void Use()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        GetComponentInChildren<TriggerConversation>().Use();
     }
 
     public void ParentCamera()
@@ -353,13 +369,13 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(StopAttack), 0.1f);
             if (faction == Enumirators.Faction.Gunman)
             {
-                GameObject instantiatedBullet = Instantiate(bullet);
-                instantiatedBullet.transform.position = gunBarrel.transform.position;
+                int direction = (int)(transform.localScale.x / math.abs(transform.localScale.x));
+                CreateBulletServerRpc(direction, gunBarrel.transform.position);
             }
             if (faction == Enumirators.Faction.Mage)
             {
-                GameObject instantiatedBullet = Instantiate(fireball);
-                instantiatedBullet.transform.position = gunBarrel.transform.position;
+                int direction = (int)(transform.localScale.x / math.abs(transform.localScale.x));
+                CreateFireballServerRpc(direction, gunBarrel.transform.position);
             }
         }
     }
@@ -712,37 +728,45 @@ public class PlayerMovement : NetworkBehaviour
         fireballGameObject.transform.localScale = localScale;
     }
 
-    //private void JoystickHorizontal()
-    //{
-    //    if (otherInput)
-    //    {
-    //        tempHorizontal = joystick.Horizontal;
-    //        if (isDashing)
-    //        {
-    //            return;
-    //        }
-    //        horizontal = joystick.Horizontal;
-    //        if (horizontal > 0.2f)
-    //        {
-    //            isMoving = true;
-    //            isRunning = true;
-    //            isIdle = false;
-    //            horizontal = 1f;
-    //        }
-    //        else if (horizontal < -0.2f)
-    //        {
-    //            isMoving = true;
-    //            isRunning = true;
-    //            isIdle = false;
-    //            horizontal = -1f;
-    //        }
-    //        else
-    //        {
-    //            isMoving = false;
-    //            isRunning = false;
-    //        }
-    //    }
-    //}
+    private void JoystickHorizontal()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        if(joystick == null)
+        {
+            return;
+        }
+        if (otherInput)
+        {
+            tempHorizontal = joystick.Horizontal;
+            if (isDashing)
+            {
+                return;
+            }
+            horizontal = joystick.Horizontal;
+            if (horizontal > 0.2f)
+            {
+                isMoving = true;
+                isRunning = true;
+                isIdle = false;
+                horizontal = 1f;
+            }
+            else if (horizontal < -0.2f)
+            {
+                isMoving = true;
+                isRunning = true;
+                isIdle = false;
+                horizontal = -1f;
+            }
+            else
+            {
+                isMoving = false;
+                isRunning = false;
+            }
+        }
+    }
 
     void Update()
     {
@@ -752,7 +776,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         if (!isDead && !map)
         {
-            //JoystickHorizontal();
+            JoystickHorizontal();
             if (horizontal != 0)
             {
                 isRunning = true;

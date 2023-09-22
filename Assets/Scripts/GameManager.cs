@@ -25,7 +25,7 @@ public class GameManager : NetworkBehaviour
     #region private-variables
 
     private List<GameObject> players;
-    private GameObject player;
+    
     private MapGeneration mapGenerator;
     private GameObject currentActiveRoom;
     private Spawner spawner;
@@ -35,12 +35,13 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private List<GameObject> prefabsNPCs;
     [SerializeField] private EnemiesScriptable spawnableEnemies;
 
-    
+
 
     #endregion
 
     #region public-variable
 
+    public GameObject player;
     public List<Classes.NPCQuest> nPCQuests = new List<Classes.NPCQuest>();
     public List<GameObject> enemies = new List<GameObject>();
     public GameObject startRoom;
@@ -83,6 +84,7 @@ public class GameManager : NetworkBehaviour
             n_currentQuestRoomID.Value = -3;
             n_questActiveStatus.Value = false;
         }
+        player.GetComponent<PlayerMovement>().SetControls();
     }
 
     private void Update()
