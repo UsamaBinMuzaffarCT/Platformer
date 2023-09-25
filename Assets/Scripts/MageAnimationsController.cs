@@ -8,12 +8,21 @@ public class MageAnimationsController : BaseAnimationControls
 
     #region private-variables
     
-    private string idle = "PixelCharAnim_Plain_idle";
-    private string run = "PixelCharAnim_Plain_run";
-    private string jump = "PixelCharAnim_Plain_jump";
-    private string dash = "PixelCharAnim_Plain_wallRide";
+    //private string idle = "PixelCharAnim_Plain_idle";
+    //private string run = "PixelCharAnim_Plain_run";
+    //private string jump = "PixelCharAnim_Plain_jump";
+    //private string dash = "PixelCharAnim_Plain_wallRide";
+    //private string backDash = "PixelCharAnim_Plain_slide";
+    //private string death = "PixelCharAnim_Plain_death";
+
+    private string idle = "Mage_idle";
+    private string run = "Mage_run";
+    private string jump = "Mage_jump";
+    private string dash = "Mage_dash";
+    private string attack = "Mage_attack";
+    private string wallRide = "Mage_wallRide";
     private string backDash = "PixelCharAnim_Plain_slide";
-    private string death = "PixelCharAnim_Plain_death";
+    private string death = "Mage_death";
 
     #endregion
 
@@ -39,6 +48,10 @@ public class MageAnimationsController : BaseAnimationControls
         {
             return LockState(death, 0.5f);
         }
+        if (playerMovement.isAttacking)
+        {
+            return LockState(attack, 0.2f);
+        }
         if (!playerMovement.isWallSliding && isFilpped)
         {
             playerSprite.transform.localScale = new Vector3(-playerSprite.transform.localScale.x, playerSprite.transform.localScale.y, playerSprite.transform.localScale.z);
@@ -48,7 +61,7 @@ public class MageAnimationsController : BaseAnimationControls
         {
             if (playerMovement.isBackDashing)
             {
-                return backDash;
+                return dash;
             }
             else
             {
@@ -62,7 +75,7 @@ public class MageAnimationsController : BaseAnimationControls
                 playerSprite.transform.localScale = new Vector3(-playerSprite.transform.localScale.x, playerSprite.transform.localScale.y, playerSprite.transform.localScale.z);
                 isFilpped = true;
             }
-            return dash;
+            return wallRide;
         }
         if (playerMovement.isJumping)
         {
