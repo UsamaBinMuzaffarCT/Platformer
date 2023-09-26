@@ -13,6 +13,7 @@ public class NetworkManagement : NetworkBehaviour
     public NetworkList<ulong> clientIDs;
     public NetworkList<int> factionIDs;
     public NetworkVariable<int> n_mapSeed = new NetworkVariable<int>(1, readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+    public string joinCode;
 
     #endregion
 

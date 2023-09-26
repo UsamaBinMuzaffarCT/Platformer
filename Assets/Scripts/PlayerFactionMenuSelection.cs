@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ public class PlayerFactionMenuSelection : MonoBehaviour
     [SerializeField] private RuntimeAnimatorController warriorAnimatorController;
     [SerializeField] private RuntimeAnimatorController mageAnimatorController;
     [SerializeField] private RuntimeAnimatorController gunmanAnimatorController;
+    [SerializeField] private TMP_Text joinCodeText;
 
 
     private Enumirators.Faction playerFaction;
@@ -27,6 +29,14 @@ public class PlayerFactionMenuSelection : MonoBehaviour
 
     private void Awake()
     {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            joinCodeText.text += NetworkManagement.Instance.joinCode;
+        }
+        else
+        {
+            joinCodeText.gameObject.SetActive(false);
+        }
         warriorButton.onClick.AddListener(SetWarriorFaction);
         mageButton.onClick.AddListener(SetMageFaction);
         gunmanButton.onClick.AddListener(SetGunmanFaction);
